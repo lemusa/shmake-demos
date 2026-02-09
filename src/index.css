@@ -1,0 +1,398 @@
+/* ============================================================
+   SHMAKE DEMOS — Base Styles
+   ============================================================ */
+
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-hover: #1c1c1c;
+  --color-border: #262626;
+  --color-text: #e5e5e5;
+  --color-text-muted: #737373;
+  --color-accent: #f5f5f5;
+  --color-accent-subtle: #a3a3a3;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --radius: 8px;
+  --max-width: 1120px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-surface);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   LANDING / 404
+   ============================================================ */
+
+.landing {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.landing-content {
+  text-align: center;
+}
+
+.landing-logo {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+}
+
+.landing-tagline {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+.landing-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.landing-link {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-accent-subtle);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.landing-link:hover {
+  color: var(--color-accent);
+}
+
+.landing-dot {
+  color: var(--color-border);
+}
+
+/* ============================================================
+   DEMO LAYOUT
+   ============================================================ */
+
+.demo-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-header {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 1.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.demo-header-inner {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.demo-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demo-brand-logo {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}
+
+.demo-brand-sep {
+  color: var(--color-border);
+  font-weight: 300;
+}
+
+.demo-brand-title {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.demo-header-link {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.demo-header-link:hover {
+  color: var(--color-accent);
+}
+
+.demo-content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.demo-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 1rem 1.5rem;
+  margin-top: auto;
+}
+
+.demo-footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.demo-footer-inner strong {
+  font-weight: 600;
+  color: var(--color-accent-subtle);
+}
+
+.demo-footer-inner a {
+  color: var(--color-accent-subtle);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.demo-footer-inner a:hover {
+  color: var(--color-accent);
+}
+
+/* ============================================================
+   DEMO LOADER
+   ============================================================ */
+
+.demo-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.demo-loader-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent-subtle);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   EXAMPLE DEMO (delete when you add real demos)
+   ============================================================ */
+
+.example-demo {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.example-demo-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+.example-demo-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.example-demo-card p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.example-demo-counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.example-demo-counter button {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.example-demo-counter button:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-accent-subtle);
+}
+
+.example-demo-count {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  min-width: 3ch;
+  text-align: center;
+}
+
+/* ============================================================
+   SHARED UTILITY CLASSES FOR DEMOS
+   Use these in your demo components for consistent styling.
+   ============================================================ */
+
+.demo-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.demo-input {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.demo-input:focus {
+  border-color: var(--color-accent-subtle);
+}
+
+.demo-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.demo-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-accent-subtle);
+}
+
+.demo-btn-primary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
+.demo-btn-primary:hover {
+  opacity: 0.9;
+  background: var(--color-accent);
+}
+
+.demo-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.demo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.demo-table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.demo-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.demo-table tr:last-child td {
+  border-bottom: none;
+}
