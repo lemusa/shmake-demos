@@ -182,14 +182,20 @@ export default function Landing() {
       endDunk()
     }
 
+    const preventScroll = (e) => {
+      e.preventDefault()
+    }
+
     window.addEventListener('mouseup', handleRelease)
     window.addEventListener('touchend', handleRelease)
     window.addEventListener('touchcancel', handleRelease)
+    window.addEventListener('touchmove', preventScroll, { passive: false })
 
     return () => {
       window.removeEventListener('mouseup', handleRelease)
       window.removeEventListener('touchend', handleRelease)
       window.removeEventListener('touchcancel', handleRelease)
+      window.removeEventListener('touchmove', preventScroll)
     }
   }, [gameState, endDunk])
 
@@ -452,6 +458,10 @@ const styles = {
     borderRadius: '12px',
     padding: '2rem 1.5rem',
     textAlign: 'center',
+    touchAction: 'none',
+    WebkitTouchCallout: 'none',
+    WebkitUserSelect: 'none',
+    userSelect: 'none',
   },
   title: {
     fontFamily: "'JetBrains Mono', monospace",
