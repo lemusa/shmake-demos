@@ -13,6 +13,8 @@ import NotFound from './components/NotFound'
 //   1. Create a folder in src/demos/your-demo-name/
 //   2. Add an index.jsx with a default export component
 //   3. Add an entry below
+//
+// Set fullPage: true for demos with their own layout/header
 // ============================================================
 
 const demos = [
@@ -21,11 +23,12 @@ const demos = [
     title: 'Example Tool',
     component: lazy(() => import('./demos/example-tool')),
   },
-  // {
-  //   path: 'acme-cutting-stock',
-  //   title: 'Cutting Stock Optimizer',
-  //   component: lazy(() => import('./demos/acme-cutting-stock')),
-  // },
+  {
+    path: 'ecoglo-luminance',
+    title: 'Luminance Testing',
+    component: lazy(() => import('./demos/ecoglo-luminance')),
+    fullPage: true,
+  },
 ]
 
 function DemoLoader() {
@@ -42,16 +45,22 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
 
-        {demos.map(({ path, title, component: Component }) => (
+        {demos.map(({ path, title, component: Component, fullPage }) => (
           <Route
             key={path}
             path={`/${path}`}
             element={
-              <DemoLayout title={title}>
+              fullPage ? (
                 <Suspense fallback={<DemoLoader />}>
                   <Component />
                 </Suspense>
-              </DemoLayout>
+              ) : (
+                <DemoLayout title={title}>
+                  <Suspense fallback={<DemoLoader />}>
+                    <Component />
+                  </Suspense>
+                </DemoLayout>
+              )
             }
           />
         ))}
