@@ -173,6 +173,26 @@ export default function Landing() {
     }
   }, [])
 
+  // Listen for release anywhere on the page while dunking
+  useEffect(() => {
+    if (gameState !== 'dunking') return
+
+    const handleRelease = (e) => {
+      e.preventDefault()
+      endDunk()
+    }
+
+    window.addEventListener('mouseup', handleRelease)
+    window.addEventListener('touchend', handleRelease)
+    window.addEventListener('touchcancel', handleRelease)
+
+    return () => {
+      window.removeEventListener('mouseup', handleRelease)
+      window.removeEventListener('touchend', handleRelease)
+      window.removeEventListener('touchcancel', handleRelease)
+    }
+  }, [gameState, endDunk])
+
   const stage = getCurrentStage(dunkProgress)
   const isCritical = dunkProgress > 55
 
@@ -338,9 +358,6 @@ export default function Landing() {
                   ...styles.dunkButtonActive,
                   ...(isCritical ? styles.dunkButtonCritical : {}),
                 }}
-                onMouseUp={endDunk}
-                onMouseLeave={endDunk}
-                onTouchEnd={(e) => { e.preventDefault(); endDunk() }}
               >
                 {isCritical ? '🫣 RELEASE NOW?!' : '☕ Dunking...'}
               </button>
