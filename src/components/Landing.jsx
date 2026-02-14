@@ -193,14 +193,23 @@ export default function Landing() {
         }
         .lp-pin::before {
           content: ''; position: absolute; inset: 0;
-          background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.07) 1px, transparent 0);
-          background-size: 24px 24px;
+          background:
+            repeating-linear-gradient(45deg, transparent, transparent 24px, rgba(255,255,255,0.08) 24px, rgba(255,255,255,0.08) 26px),
+            repeating-linear-gradient(-45deg, transparent, transparent 24px, rgba(255,255,255,0.08) 24px, rgba(255,255,255,0.08) 26px);
           pointer-events: none;
         }
         .lp-pin::after {
           content: ''; position: absolute; inset: 0;
-          background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.15) 0%, transparent 60%);
+          background:
+            radial-gradient(circle at 90% 10%, transparent 80px, rgba(255,255,255,0.15) 80px, rgba(255,255,255,0.15) 84px, transparent 84px),
+            radial-gradient(circle at 90% 10%, transparent 120px, rgba(255,255,255,0.1) 120px, rgba(255,255,255,0.1) 123px, transparent 123px),
+            radial-gradient(circle at 90% 10%, transparent 160px, rgba(255,255,255,0.06) 160px, rgba(255,255,255,0.06) 162px, transparent 162px),
+            radial-gradient(circle at 8% 88%, transparent 50px, rgba(255,255,255,0.12) 50px, rgba(255,255,255,0.12) 53px, transparent 53px),
+            radial-gradient(circle at 8% 88%, transparent 85px, rgba(255,255,255,0.08) 85px, rgba(255,255,255,0.08) 87px, transparent 87px),
+            radial-gradient(circle at 50% 80%, transparent 35px, rgba(255,255,255,0.07) 35px, rgba(255,255,255,0.07) 37px, transparent 37px),
+            radial-gradient(circle at 75% 50%, transparent 25px, rgba(255,255,255,0.06) 25px, rgba(255,255,255,0.06) 27px, transparent 27px),
+            radial-gradient(ellipse at 25% 15%, rgba(255,255,255,0.1) 0%, transparent 45%),
+            radial-gradient(ellipse at 85% 85%, rgba(0,0,0,0.15) 0%, transparent 45%);
           pointer-events: none;
         }
         .lp-pin > * { position: relative; z-index: 1; }
@@ -212,7 +221,7 @@ export default function Landing() {
           font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 700;
           letter-spacing: 0.3em; text-align: center;
           padding: 14px 16px; width: 160px;
-          background: rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.25); border-radius: 8px;
+          background: #c56409; border: 2px solid rgba(255,255,255,0.25); border-radius: 8px;
           color: #fff; outline: none; transition: border-color 0.2s;
         }
         .lp-pin-input::placeholder { color: rgba(255,255,255,0.3); }
@@ -222,11 +231,11 @@ export default function Landing() {
         .lp-pin-btn {
           font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
           padding: 14px 24px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);
-          background: rgba(0,0,0,0.15); color: #fff; cursor: pointer; transition: all 0.2s;
+          background: #c56409; color: #fff; cursor: pointer; transition: all 0.2s;
         }
         .lp-pin-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .lp-pin-btn:not(:disabled):hover { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.5); }
-        .lp-pin-btn.success { background: rgba(0,0,0,0.3); }
+        .lp-pin-btn:not(:disabled):hover { background: #a85507; border-color: rgba(255,255,255,0.5); }
+        .lp-pin-btn.success { background: #9a4e06; }
         .lp-pin-error { font-size: 12px; font-weight: 600; color: #fff; }
 
         .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); width: 50%; }
