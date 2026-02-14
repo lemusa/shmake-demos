@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import PIN_REGISTRY from '../pinRegistry'
+
+// ─── Tim Tam Game Data ───
 
 const STAGES = [
   { threshold: 0, label: 'Dry', color: '#8B4513', integrity: 100 },
@@ -10,31 +14,11 @@ const STAGES = [
 ]
 
 const RESULTS = {
-  dry: {
-    emoji: '😐',
-    title: 'Coward.',
-    subtitle: 'That Tim Tam barely touched the tea. Were you even trying?',
-  },
-  light: {
-    emoji: '🤔',
-    title: 'Timid Dunker',
-    subtitle: 'A brief encounter. The Tim Tam wanted more.',
-  },
-  perfect: {
-    emoji: '🤌',
-    title: 'PERFECT DUNK',
-    subtitle: 'Maximum saturation. Zero casualties. You are a god among dunkers.',
-  },
-  risky: {
-    emoji: '😰',
-    title: 'Living on the Edge',
-    subtitle: 'That was close. The Tim Tam gods smiled upon you today.',
-  },
-  disaster: {
-    emoji: '💀',
-    title: 'CATASTROPHIC FAILURE',
-    subtitle: '',
-  },
+  dry: { emoji: '😐', title: 'Coward.', subtitle: 'That Tim Tam barely touched the tea. Were you even trying?' },
+  light: { emoji: '🤔', title: 'Timid Dunker', subtitle: 'A brief encounter. The Tim Tam wanted more.' },
+  perfect: { emoji: '🤌', title: 'PERFECT DUNK', subtitle: 'Maximum saturation. Zero casualties. You are a god among dunkers.' },
+  risky: { emoji: '😰', title: 'Living on the Edge', subtitle: 'That was close. The Tim Tam gods smiled upon you today.' },
+  disaster: { emoji: '💀', title: 'CATASTROPHIC FAILURE', subtitle: '' },
 }
 
 const DISASTER_MESSAGES = [
@@ -67,7 +51,34 @@ function getCurrentStage(progress) {
   return current
 }
 
+// ─── Component ───
+
 export default function Landing() {
+  const navigate = useNavigate()
+  const [pin, setPin] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [pinSuccess, setPinSuccess] = useState(false)
+
+  const handlePinChange = (value) => {
+    const cleaned = value.replace(/\D/g, '').slice(0, 6)
+    setPin(cleaned)
+    setPinError('')
+    setPinSuccess(false)
+  }
+
+  const handlePinSubmit = () => {
+    const entry = PIN_REGISTRY[pin]
+    if (!entry) { setPinError('Invalid pin'); return }
+    if (entry.expires && new Date(entry.expires) < new Date()) { setPinError('This demo has expired'); return }
+    setPinSuccess(true)
+    setTimeout(() => navigate(entry.path), 400)
+  }
+
+  const handlePinKeyDown = (e) => {
+    if (e.key === 'Enter' && pin.length >= 4) handlePinSubmit()
+  }
+
+  // Tim Tam state
   const [gameState, setGameState] = useState('idle')
   const [dunkProgress, setDunkProgress] = useState(0)
   const [result, setResult] = useState(null)
@@ -100,16 +111,11 @@ export default function Landing() {
   const endDunk = useCallback(() => {
     if (animRef.current) cancelAnimationFrame(animRef.current)
     animRef.current = null
-
     const progress = dunkProgressRef.current
-    const finalResult = getResult(progress, false)
     setGameState('result')
     setAttempts(a => a + 1)
-    setResult(finalResult)
-
-    if (progress > 0 && progress >= 20) {
-      setHighScore(prev => Math.max(prev, Math.round(progress)))
-    }
+    setResult(getResult(progress, false))
+    if (progress >= 20) setHighScore(prev => Math.max(prev, Math.round(progress)))
   }, [])
 
   const startDunk = useCallback(() => {
@@ -127,70 +133,34 @@ export default function Landing() {
       setDunkProgress(progress)
       dunkProgressRef.current = progress
       setBiscuitY(Math.min(progress * 0.6, 55))
-
-      if (progress > 35) {
-        setWobble(Math.sin(elapsed / 80) * (progress - 35) * 0.08)
-      }
-
+      if (progress > 35) setWobble(Math.sin(elapsed / 80) * (progress - 35) * 0.08)
       if (progress > 45 && Math.random() < 0.03) {
-        setCrumbs(prev => [
-          ...prev.slice(-8),
-          {
-            id: Date.now() + Math.random(),
-            x: 45 + Math.random() * 10,
-            delay: Math.random() * 0.2,
-          },
-        ])
+        setCrumbs(prev => [...prev.slice(-8), { id: Date.now() + Math.random(), x: 45 + Math.random() * 10, delay: Math.random() * 0.2 }])
       }
-
       if (progress > 55) {
         collapseChanceRef.current += 0.001 * ((progress - 55) / 10)
         if (Math.random() < collapseChanceRef.current) {
-          setCollapsed(true)
-          setGameState('result')
-          setAttempts(a => a + 1)
-          setResult(getResult(progress, true))
-          return
+          setCollapsed(true); setGameState('result'); setAttempts(a => a + 1); setResult(getResult(progress, true)); return
         }
       }
-
       if (progress >= 100) {
-        setCollapsed(true)
-        setGameState('result')
-        setAttempts(a => a + 1)
-        setResult(getResult(100, true))
-        return
+        setCollapsed(true); setGameState('result'); setAttempts(a => a + 1); setResult(getResult(100, true)); return
       }
-
       animRef.current = requestAnimationFrame(animate)
     }
     animRef.current = requestAnimationFrame(animate)
   }, [gameState])
 
-  useEffect(() => {
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current)
-    }
-  }, [])
+  useEffect(() => { return () => { if (animRef.current) cancelAnimationFrame(animRef.current) } }, [])
 
-  // Listen for release anywhere on the page while dunking
   useEffect(() => {
     if (gameState !== 'dunking') return
-
-    const handleRelease = (e) => {
-      e.preventDefault()
-      endDunk()
-    }
-
-    const preventScroll = (e) => {
-      e.preventDefault()
-    }
-
+    const handleRelease = (e) => { e.preventDefault(); endDunk() }
+    const preventScroll = (e) => { e.preventDefault() }
     window.addEventListener('mouseup', handleRelease)
     window.addEventListener('touchend', handleRelease)
     window.addEventListener('touchcancel', handleRelease)
     window.addEventListener('touchmove', preventScroll, { passive: false })
-
     return () => {
       window.removeEventListener('mouseup', handleRelease)
       window.removeEventListener('touchend', handleRelease)
@@ -203,486 +173,293 @@ export default function Landing() {
   const isCritical = dunkProgress > 55
 
   return (
-    <div style={styles.page}>
-      <div style={styles.container}>
-        <div style={styles.gameArea}>
-          <h1 style={styles.title}>Tim Tam Dunk Simulator</h1>
-          <p style={styles.subtitle}>
-            Hold to dunk. Release before structural failure. Simple.
-          </p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-          <div style={styles.scene}>
-            <div style={styles.steamContainer}>
-              {[0, 1, 2].map(i => (
-                <div
-                  key={i}
-                  style={{
-                    ...styles.steam,
-                    left: `${35 + i * 15}%`,
-                    animationDelay: `${i * 0.5}s`,
-                  }}
-                />
-              ))}
-            </div>
+        .lp { font-family: 'Inter', -apple-system, system-ui, sans-serif; height: 100vh; overflow: hidden; background: #1a1a1a; -webkit-font-smoothing: antialiased; }
 
-            {!collapsed && (
-              <div
-                style={{
-                  ...styles.biscuitContainer,
-                  transform: `translateY(${biscuitY}px) rotate(${wobble}deg)`,
-                }}
-              >
-                <div
-                  style={{
-                    ...styles.biscuit,
-                    background: stage.color,
-                    boxShadow: isCritical
-                      ? `0 0 ${dunkProgress - 45}px rgba(139, 69, 19, 0.3)`
-                      : 'none',
-                  }}
-                >
-                  <div style={styles.biscuitCoating} />
-                  <div style={styles.biscuitCoating2} />
-                  <div
-                    style={{
-                      ...styles.sogginess,
-                      height: `${Math.min(dunkProgress * 1.2, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+        /* Two columns */
+        .lp-grid { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; }
+        @media (max-width: 720px) { .lp-grid { grid-template-columns: 1fr; } }
 
-            {collapsed && (
-              <div style={styles.fallingBiscuit}>
-                <div style={{ ...styles.biscuit, background: '#3a1205', opacity: 0.7 }}>
-                  <div style={styles.biscuitCoating} />
-                </div>
-              </div>
-            )}
+        /* Orange pin column */
+        .lp-pin {
+          background: #e8760a;
+          padding: 60px 40px;
+          display: flex; flex-direction: column; justify-content: center;
+        }
+        .lp-pin h1 { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 10px; }
+        .lp-pin .sub { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 36px; }
+        .lp-pin-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+        .lp-pin-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .lp-pin-input {
+          font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 700;
+          letter-spacing: 0.3em; text-align: center;
+          padding: 14px 16px; width: 160px;
+          background: rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.25); border-radius: 8px;
+          color: #fff; outline: none; transition: border-color 0.2s;
+        }
+        .lp-pin-input::placeholder { color: rgba(255,255,255,0.3); }
+        .lp-pin-input:focus { border-color: rgba(255,255,255,0.6); }
+        .lp-pin-input.error { border-color: #fff; background: rgba(200,0,0,0.2); }
+        .lp-pin-input.success { border-color: #fff; }
+        .lp-pin-btn {
+          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+          padding: 14px 24px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);
+          background: rgba(0,0,0,0.15); color: #fff; cursor: pointer; transition: all 0.2s;
+        }
+        .lp-pin-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .lp-pin-btn:not(:disabled):hover { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.5); }
+        .lp-pin-btn.success { background: rgba(0,0,0,0.3); }
+        .lp-pin-error { font-size: 12px; font-weight: 600; color: #fff; }
 
-            {crumbs.map(crumb => (
-              <div
-                key={crumb.id}
-                style={{
-                  ...styles.crumb,
-                  left: `${crumb.x}%`,
-                  animationDelay: `${crumb.delay}s`,
-                }}
+        .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
+        .lp-pin-contact p { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 4px; }
+        .lp-pin-contact a { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .lp-pin-contact a:hover { text-decoration: underline; }
+
+        /* White Tim Tam column */
+        .lp-tt {
+          background: #f5f5f5; padding: 40px 32px;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          touch-action: none; -webkit-touch-callout: none; user-select: none;
+        }
+        .lp-tt-label { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 2px; }
+        .lp-tt-sub { font-size: 12px; color: #999; margin-bottom: 20px; }
+
+        .tt-scene { position: relative; height: 200px; width: 160px; margin: 0 auto 16px; }
+        .tt-steam {
+          position: absolute; width: 6px; height: 16px; background: rgba(0,0,0,0.04);
+          border-radius: 50%; animation: steam 2s ease-in-out infinite;
+        }
+        .tt-biscuit-wrap {
+          position: absolute; top: 45px; left: 50%; margin-left: -14px; z-index: 5;
+          transition: transform 0.05s linear;
+        }
+        .tt-biscuit {
+          width: 28px; height: 70px; border-radius: 3px; position: relative;
+          overflow: hidden; border: 1px solid rgba(0,0,0,0.2);
+        }
+        .tt-biscuit-lines {
+          position: absolute; inset: 0;
+          background: repeating-linear-gradient(180deg, transparent, transparent 16px, rgba(0,0,0,0.1) 16px, rgba(0,0,0,0.1) 18px);
+        }
+        .tt-biscuit-gloss {
+          position: absolute; top: 0; left: 0; right: 0; height: 28%;
+          background: linear-gradient(180deg, rgba(92,50,18,0.3), transparent);
+        }
+        .tt-sogginess {
+          position: absolute; bottom: 0; left: 0; right: 0;
+          background: linear-gradient(0deg, rgba(30,15,5,0.9), rgba(60,30,10,0.3));
+          transition: height 0.3s ease;
+        }
+        .tt-falling {
+          position: absolute; top: 105px; left: 50%; margin-left: -14px; z-index: 5;
+          animation: fall 0.8s ease-in forwards;
+        }
+        .tt-crumb {
+          position: absolute; top: 110px; width: 3px; height: 3px; border-radius: 50%;
+          background: #8B6914; animation: crumbFall 0.8s ease-in forwards;
+        }
+        .tt-mug-back {
+          position: absolute; bottom: 8px; left: 50%; margin-left: -40px;
+          width: 80px; height: 80px;
+          background: linear-gradient(180deg, #e0e0e0, #bbb); border-radius: 5px 5px 14px 14px;
+          z-index: 3; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .tt-mug-inner {
+          position: absolute; top: 5px; left: 5px; right: 5px; bottom: 8px;
+          background: #2a2a2a; border-radius: 2px 2px 10px 10px; overflow: hidden;
+        }
+        .tt-tea {
+          position: absolute; bottom: 0; left: 0; right: 0; height: 75%;
+          background: linear-gradient(180deg, #78350f, #5c2d0e); transition: transform 0.3s ease;
+        }
+        .tt-tea.splash { transform: scaleY(1.05); }
+        .tt-tea-shine {
+          position: absolute; top: 0; left: 10%; width: 36%; height: 3px;
+          background: rgba(255,255,255,0.08); border-radius: 2px;
+        }
+        .tt-mug-front {
+          position: absolute; bottom: 8px; left: 50%; margin-left: -40px;
+          width: 80px; height: 80px; border-radius: 5px 5px 14px 14px;
+          border: 5px solid #bbb; border-top-color: #ddd;
+          background: transparent; z-index: 6; pointer-events: none; box-sizing: border-box;
+        }
+        .tt-handle {
+          position: absolute; right: -18px; top: 16px; width: 18px; height: 40px;
+          border: 6px solid #bbb; border-left: none; border-radius: 0 12px 12px 0;
+        }
+
+        .tt-status { min-height: 110px; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; max-width: 280px; margin-bottom: 8px; }
+        .tt-bar { height: 6px; background: #ddd; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+        .tt-bar-fill { height: 100%; border-radius: 3px; transition: width 0.1s linear; }
+        .tt-stage { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+        .tt-integ { font-size: 11px; color: #aaa; }
+        .tt-r-emoji { font-size: 2.5rem; margin-bottom: 6px; }
+        .tt-r-title { font-size: 14px; font-weight: 800; color: #222; margin-bottom: 4px; }
+        .tt-r-sub { font-size: 12px; color: #888; line-height: 1.5; }
+        .tt-r-score { font-size: 12px; color: #b45309; margin-top: 6px; font-weight: 700; }
+
+        .tt-btn {
+          font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+          padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer;
+          background: #78350f; color: #fed7aa; transition: all 0.15s;
+          touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none;
+        }
+        .tt-btn.active { background: #92400e; transform: scale(0.97); box-shadow: 0 0 16px rgba(180,83,9,0.15); }
+        .tt-btn.critical { background: #b91c1c; color: #fecaca; animation: pulse 0.3s ease-in-out infinite alternate; }
+        .tt-stats { font-size: 11px; color: #aaa; margin-top: 10px; font-weight: 500; }
+
+        @keyframes steam { 0%{opacity:0;transform:translateY(0) scaleX(1)} 50%{opacity:0.5} 100%{opacity:0;transform:translateY(-30px) scaleX(1.8)} }
+        @keyframes fall { 0%{transform:translateY(0) rotate(0);opacity:0.7} 100%{transform:translateY(50px) rotate(25deg);opacity:0} }
+        @keyframes crumbFall { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(30px);opacity:0} }
+        @keyframes pulse { 0%{opacity:1} 100%{opacity:0.5} }
+      `}</style>
+
+      <div className="lp">
+        <div className="lp-grid">
+          {/* Orange — Pin Entry */}
+          <div className="lp-pin">
+            <h1>Demo Sandbox</h1>
+            <p className="sub">Got a pin code? Enter it below to access your demo.</p>
+
+            <div className="lp-pin-label">Demo Pin</div>
+            <div className="lp-pin-row">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={pin}
+                onChange={e => handlePinChange(e.target.value)}
+                onKeyDown={handlePinKeyDown}
+                placeholder="••••"
+                maxLength={6}
+                className={`lp-pin-input${pinError ? ' error' : ''}${pinSuccess ? ' success' : ''}`}
               />
-            ))}
-
-            {/* Mug back layer - tea visible behind biscuit */}
-            <div style={styles.mugBack}>
-              <div style={styles.mugBackInner}>
-                <div
-                  style={{
-                    ...styles.tea,
-                    ...(splashActive ? styles.teaSplash : {}),
-                  }}
-                >
-                  <div style={styles.teaShine} />
-                </div>
-              </div>
-            </div>
-
-            {/* Mug front rim - renders on top of biscuit */}
-            <div style={styles.mugFront}>
-              <div style={styles.mugHandle} />
-            </div>
-          </div>
-
-          {/* Fixed-height area so button doesn't jump */}
-          <div style={styles.statusResultArea}>
-            {gameState === 'dunking' && (
-              <div>
-                <div style={styles.progressBar}>
-                  <div
-                    style={{
-                      ...styles.progressFill,
-                      width: `${dunkProgress}%`,
-                      background:
-                        dunkProgress > 55
-                          ? 'linear-gradient(90deg, #b45309, #dc2626)'
-                          : dunkProgress > 35
-                          ? 'linear-gradient(90deg, #b45309, #f59e0b)'
-                          : 'linear-gradient(90deg, #78350f, #b45309)',
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    ...styles.stageLabel,
-                    color: isCritical ? '#ef4444' : '#a3a3a3',
-                    ...(isCritical
-                      ? { animation: 'pulse 0.3s ease-in-out infinite alternate' }
-                      : {}),
-                  }}
-                >
-                  {stage.label}
-                  {isCritical && ' ⚠️'}
-                </div>
-                <div style={styles.integrityLabel}>
-                  Structural Integrity: {Math.max(0, Math.round(stage.integrity - (dunkProgress - stage.threshold)))}%
-                </div>
-              </div>
-            )}
-
-            {gameState === 'result' && result && (
-              <div>
-                <div style={styles.resultEmoji}>{result.emoji}</div>
-                <div style={styles.resultTitle}>{result.title}</div>
-                <div style={styles.resultSubtitle}>{result.subtitle}</div>
-                {!collapsed && dunkProgress >= 20 && (
-                  <div style={styles.scoreLabel}>
-                    Saturation: {Math.round(dunkProgress)}%
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div style={styles.controls}>
-            {gameState === 'idle' && (
               <button
-                style={styles.dunkButton}
-                onMouseDown={startDunk}
-                onTouchStart={(e) => { e.preventDefault(); startDunk() }}
+                onClick={handlePinSubmit}
+                disabled={pin.length < 4 || pinSuccess}
+                className={`lp-pin-btn${pinSuccess ? ' success' : ''}`}
               >
+                {pinSuccess ? '✓' : 'Go'}
+              </button>
+            </div>
+            {pinError && <div className="lp-pin-error">{pinError}</div>}
+
+            <div className="lp-pin-contact">
+              <p>Want a custom tool built for your business?</p>
+              <a href="mailto:sam@shmake.nz">sam@shmake.nz →</a>
+            </div>
+          </div>
+
+          {/* White — Tim Tam */}
+          <div className="lp-tt">
+            <div className="lp-tt-label">Tim Tam Dunk Simulator</div>
+            <div className="lp-tt-sub">Hold to dunk. Release before structural failure.</div>
+
+            <div className="tt-scene">
+              {[0,1,2].map(i => (
+                <div key={i} className="tt-steam" style={{ left: `${30+i*18}%`, top: 60, animationDelay: `${i*0.5}s` }} />
+              ))}
+
+              {!collapsed && (
+                <div className="tt-biscuit-wrap" style={{ transform: `translateY(${biscuitY}px) rotate(${wobble}deg)` }}>
+                  <div className="tt-biscuit" style={{
+                    background: stage.color,
+                    boxShadow: isCritical ? `0 0 ${dunkProgress-45}px rgba(139,69,19,0.3)` : 'none',
+                  }}>
+                    <div className="tt-biscuit-lines" />
+                    <div className="tt-biscuit-gloss" />
+                    <div className="tt-sogginess" style={{ height: `${Math.min(dunkProgress*1.2,100)}%` }} />
+                  </div>
+                </div>
+              )}
+
+              {collapsed && (
+                <div className="tt-falling">
+                  <div className="tt-biscuit" style={{ background: '#3a1205', opacity: 0.7 }}>
+                    <div className="tt-biscuit-lines" />
+                  </div>
+                </div>
+              )}
+
+              {crumbs.map(c => (
+                <div key={c.id} className="tt-crumb" style={{ left: `${c.x}%`, animationDelay: `${c.delay}s` }} />
+              ))}
+
+              <div className="tt-mug-back">
+                <div className="tt-mug-inner">
+                  <div className={`tt-tea${splashActive ? ' splash' : ''}`}>
+                    <div className="tt-tea-shine" />
+                  </div>
+                </div>
+              </div>
+              <div className="tt-mug-front">
+                <div className="tt-handle" />
+              </div>
+            </div>
+
+            <div className="tt-status">
+              {gameState === 'dunking' && (
+                <div style={{ width: '100%' }}>
+                  <div className="tt-bar">
+                    <div className="tt-bar-fill" style={{
+                      width: `${dunkProgress}%`,
+                      background: dunkProgress > 55 ? 'linear-gradient(90deg,#b45309,#dc2626)' : dunkProgress > 35 ? 'linear-gradient(90deg,#b45309,#f59e0b)' : 'linear-gradient(90deg,#78350f,#b45309)',
+                    }} />
+                  </div>
+                  <div className="tt-stage" style={{
+                    color: isCritical ? '#dc2626' : '#888',
+                    ...(isCritical ? { animation: 'pulse 0.3s ease-in-out infinite alternate' } : {}),
+                  }}>
+                    {stage.label}{isCritical && ' ⚠️'}
+                  </div>
+                  <div className="tt-integ">
+                    Integrity: {Math.max(0, Math.round(stage.integrity - (dunkProgress - stage.threshold)))}%
+                  </div>
+                </div>
+              )}
+
+              {gameState === 'result' && result && (
+                <div>
+                  <div className="tt-r-emoji">{result.emoji}</div>
+                  <div className="tt-r-title">{result.title}</div>
+                  <div className="tt-r-sub">{result.subtitle}</div>
+                  {!collapsed && dunkProgress >= 20 && (
+                    <div className="tt-r-score">Saturation: {Math.round(dunkProgress)}%</div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {gameState === 'idle' && (
+              <button className="tt-btn" onMouseDown={startDunk} onTouchStart={e => { e.preventDefault(); startDunk() }}>
                 🍫 Hold to Dunk
               </button>
             )}
             {gameState === 'dunking' && (
-              <button
-                style={{
-                  ...styles.dunkButton,
-                  ...styles.dunkButtonActive,
-                  ...(isCritical ? styles.dunkButtonCritical : {}),
-                }}
-              >
-                {isCritical ? '🫣 RELEASE NOW?!' : '☕ Dunking...'}
+              <button className={`tt-btn active${isCritical ? ' critical' : ''}`}>
+                {isCritical ? '🫣 RELEASE!' : '☕ Dunking...'}
               </button>
             )}
             {gameState === 'result' && (
-              <button style={styles.dunkButton} onClick={resetGame}>
-                🍫 Another Tim Tam
-              </button>
+              <button className="tt-btn" onClick={resetGame}>🍫 Another Tim Tam</button>
+            )}
+
+            {(highScore > 0 || attempts > 0) && (
+              <div className="tt-stats">
+                {highScore > 0 && `Best: ${highScore}%`}
+                {highScore > 0 && attempts > 0 && ' · '}
+                {attempts > 0 && `Consumed: ${attempts}`}
+              </div>
             )}
           </div>
-
-          {(highScore > 0 || attempts > 0) && (
-            <div style={styles.stats}>
-              {highScore > 0 && <span>Best dunk: {highScore}%</span>}
-              {highScore > 0 && attempts > 0 && <span style={styles.statDot}>·</span>}
-              {attempts > 0 && <span>Tim Tams consumed: {attempts}</span>}
-            </div>
-          )}
         </div>
 
       </div>
-
-      <style>{`
-        @keyframes steam {
-          0% { opacity: 0; transform: translateY(0) scaleX(1); }
-          50% { opacity: 0.6; }
-          100% { opacity: 0; transform: translateY(-40px) scaleX(2); }
-        }
-        @keyframes fall {
-          0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-          100% { transform: translateY(60px) rotate(25deg); opacity: 0; }
-        }
-        @keyframes crumbFall {
-          0% { transform: translateY(0); opacity: 1; }
-          100% { transform: translateY(40px); opacity: 0; }
-        }
-        @keyframes pulse {
-          0% { opacity: 1; }
-          100% { opacity: 0.5; }
-        }
-      `}</style>
-    </div>
+    </>
   )
-}
-
-const styles = {
-  page: {
-    height: '100vh',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '1.5rem',
-    background: '#0a0a0a',
-    fontFamily: "'DM Sans', system-ui, sans-serif",
-  },
-  container: {
-    width: '100%',
-    maxWidth: '460px',
-  },
-  gameArea: {
-    background: '#141414',
-    border: '1px solid #262626',
-    borderRadius: '12px',
-    padding: '2rem 1.5rem',
-    textAlign: 'center',
-    touchAction: 'none',
-    WebkitTouchCallout: 'none',
-    WebkitUserSelect: 'none',
-    userSelect: 'none',
-  },
-  title: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '1.15rem',
-    fontWeight: 500,
-    color: '#e5e5e5',
-    margin: '0 0 0.25rem',
-  },
-  subtitle: {
-    fontSize: '0.85rem',
-    color: '#737373',
-    margin: '0 0 2rem',
-  },
-  scene: {
-    position: 'relative',
-    height: '260px',
-    margin: '0 auto 1.5rem',
-    maxWidth: '200px',
-    userSelect: 'none',
-  },
-  steamContainer: {
-    position: 'absolute',
-    top: '95px',
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
-  steam: {
-    position: 'absolute',
-    width: '8px',
-    height: '20px',
-    background: 'rgba(255,255,255,0.06)',
-    borderRadius: '50%',
-    animation: 'steam 2s ease-in-out infinite',
-  },
-  biscuitContainer: {
-    position: 'absolute',
-    top: '95px',
-    left: '50%',
-    marginLeft: '-16px',
-    zIndex: 5,
-    transition: 'transform 0.05s linear',
-  },
-  biscuit: {
-    width: '32px',
-    height: '80px',
-    borderRadius: '4px',
-    position: 'relative',
-    overflow: 'hidden',
-    border: '1px solid rgba(0,0,0,0.3)',
-  },
-  biscuitCoating: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '100%',
-    background:
-      'repeating-linear-gradient(180deg, transparent, transparent 18px, rgba(0,0,0,0.15) 18px, rgba(0,0,0,0.15) 20px)',
-  },
-  biscuitCoating2: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '30%',
-    background: 'linear-gradient(180deg, rgba(92,50,18,0.5), transparent)',
-  },
-  sogginess: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    background: 'linear-gradient(0deg, rgba(30,15,5,0.9), rgba(60,30,10,0.4))',
-    transition: 'height 0.3s ease',
-  },
-  fallingBiscuit: {
-    position: 'absolute',
-    top: '145px',
-    left: '50%',
-    marginLeft: '-16px',
-    zIndex: 5,
-    animation: 'fall 0.8s ease-in forwards',
-  },
-  crumb: {
-    position: 'absolute',
-    top: '150px',
-    width: '4px',
-    height: '4px',
-    borderRadius: '50%',
-    background: '#5a3a1a',
-    animation: 'crumbFall 0.8s ease-in forwards',
-  },
-  mugBack: {
-    position: 'absolute',
-    bottom: '10px',
-    left: '50%',
-    marginLeft: '-50px',
-    width: '100px',
-    height: '100px',
-    background: 'linear-gradient(180deg, #d4d4d4, #a3a3a3)',
-    borderRadius: '6px 6px 16px 16px',
-    zIndex: 3,
-    boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-  },
-  mugBackInner: {
-    position: 'absolute',
-    top: '6px',
-    left: '6px',
-    right: '6px',
-    bottom: '10px',
-    background: '#1a1a1a',
-    borderRadius: '2px 2px 12px 12px',
-    overflow: 'hidden',
-  },
-  mugFront: {
-    position: 'absolute',
-    bottom: '10px',
-    left: '50%',
-    marginLeft: '-50px',
-    width: '100px',
-    height: '100px',
-    borderRadius: '6px 6px 16px 16px',
-    border: '6px solid #a3a3a3',
-    borderTop: '6px solid #d4d4d4',
-    background: 'transparent',
-    zIndex: 6,
-    pointerEvents: 'none',
-    boxSizing: 'border-box',
-  },
-  tea: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '75%',
-    background: 'linear-gradient(180deg, #78350f, #5c2d0e)',
-    transition: 'transform 0.3s ease',
-  },
-  teaSplash: {
-    transform: 'scaleY(1.05)',
-  },
-  teaShine: {
-    position: 'absolute',
-    top: 0,
-    left: '10%',
-    width: '40%',
-    height: '4px',
-    background: 'rgba(255,255,255,0.08)',
-    borderRadius: '2px',
-  },
-  mugHandle: {
-    position: 'absolute',
-    right: '-22px',
-    top: '20px',
-    width: '22px',
-    height: '50px',
-    border: '8px solid #a3a3a3',
-    borderLeft: 'none',
-    borderRadius: '0 14px 14px 0',
-  },
-  statusResultArea: {
-    minHeight: '140px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1rem',
-    textAlign: 'center',
-  },
-  progressBar: {
-    height: '8px',
-    background: '#262626',
-    borderRadius: '4px',
-    overflow: 'hidden',
-    marginBottom: '0.5rem',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: '4px',
-    transition: 'width 0.1s linear',
-  },
-  stageLabel: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '0.8rem',
-    fontWeight: 500,
-    marginBottom: '0.25rem',
-  },
-  integrityLabel: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '0.7rem',
-    color: '#525252',
-  },
-  resultEmoji: {
-    fontSize: '3rem',
-    marginBottom: '0.5rem',
-  },
-  resultTitle: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '1.1rem',
-    fontWeight: 600,
-    color: '#e5e5e5',
-    marginBottom: '0.5rem',
-  },
-  resultSubtitle: {
-    fontSize: '0.85rem',
-    color: '#737373',
-    lineHeight: 1.5,
-    maxWidth: '320px',
-    margin: '0 auto',
-  },
-  scoreLabel: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '0.8rem',
-    color: '#b45309',
-    marginTop: '0.75rem',
-  },
-  controls: {
-    marginBottom: '1rem',
-  },
-  dunkButton: {
-    fontFamily: "'DM Sans', system-ui, sans-serif",
-    fontSize: '1rem',
-    fontWeight: 600,
-    padding: '0.75rem 2rem',
-    borderRadius: '8px',
-    border: '1px solid #362312',
-    background: 'linear-gradient(180deg, #78350f, #5c2d0e)',
-    color: '#fed7aa',
-    cursor: 'pointer',
-    transition: 'all 0.15s',
-    touchAction: 'manipulation',
-    WebkitTapHighlightColor: 'transparent',
-    userSelect: 'none',
-  },
-  dunkButtonActive: {
-    background: 'linear-gradient(180deg, #92400e, #78350f)',
-    transform: 'scale(0.97)',
-    boxShadow: '0 0 20px rgba(180, 83, 9, 0.2)',
-  },
-  dunkButtonCritical: {
-    background: 'linear-gradient(180deg, #b91c1c, #991b1b)',
-    borderColor: '#7f1d1d',
-    animation: 'pulse 0.3s ease-in-out infinite alternate',
-  },
-  stats: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '0.7rem',
-    color: '#525252',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-  },
-  statDot: {
-    color: '#333',
-  },
 }
