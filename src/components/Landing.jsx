@@ -238,7 +238,7 @@ export default function Landing() {
         .lp-pin-btn.success { background: #9a4e06; }
         .lp-pin-error { font-size: 12px; font-weight: 600; color: #fff; }
 
-        .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); width: 50%; }
+        .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); width: 30%; }
         .lp-pin-contact p { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
         .lp-pin-contact a {
           display: block; width: 100%; padding: 12px 0; background: #179ecd; color: #fff;
