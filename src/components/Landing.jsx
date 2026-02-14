@@ -181,15 +181,29 @@ export default function Landing() {
         .lp { font-family: 'Inter', -apple-system, system-ui, sans-serif; height: 100vh; overflow: hidden; background: #1a1a1a; -webkit-font-smoothing: antialiased; }
 
         /* Two columns */
-        .lp-grid { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; }
+        .lp-grid { display: grid; grid-template-columns: 7fr 3fr; height: 100vh; }
         @media (max-width: 720px) { .lp-grid { grid-template-columns: 1fr; } }
 
         /* Orange pin column */
         .lp-pin {
           background: #e8760a;
           padding: 60px 40px;
-          display: flex; flex-direction: column; justify-content: center;
+          display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+          position: relative; overflow: hidden;
         }
+        .lp-pin::before {
+          content: ''; position: absolute; inset: 0;
+          background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.07) 1px, transparent 0);
+          background-size: 24px 24px;
+          pointer-events: none;
+        }
+        .lp-pin::after {
+          content: ''; position: absolute; inset: 0;
+          background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.15) 0%, transparent 60%);
+          pointer-events: none;
+        }
+        .lp-pin > * { position: relative; z-index: 1; }
         .lp-pin h1 { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 10px; }
         .lp-pin .sub { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 36px; }
         .lp-pin-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
@@ -215,10 +229,14 @@ export default function Landing() {
         .lp-pin-btn.success { background: rgba(0,0,0,0.3); }
         .lp-pin-error { font-size: 12px; font-weight: 600; color: #fff; }
 
-        .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
-        .lp-pin-contact p { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 4px; }
-        .lp-pin-contact a { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
-        .lp-pin-contact a:hover { text-decoration: underline; }
+        .lp-pin-contact { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); width: 50%; }
+        .lp-pin-contact p { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
+        .lp-pin-contact a {
+          display: block; width: 100%; padding: 12px 0; background: #179ecd; color: #fff;
+          border-radius: 8px; font-weight: 600; font-size: 16px; text-decoration: none;
+          text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .lp-pin-contact a:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
 
         /* White Tim Tam column */
         .lp-tt {
@@ -323,8 +341,8 @@ export default function Landing() {
         <div className="lp-grid">
           {/* Orange — Pin Entry */}
           <div className="lp-pin">
-            <h1>Demo Sandbox</h1>
-            <p className="sub">Got a pin code? Enter it below to access your demo.</p>
+            <h1>I've built something for you</h1>
+            <p className="sub">Enter your pin to check it out.</p>
 
             <div className="lp-pin-label">Demo Pin</div>
             <div className="lp-pin-row">
@@ -351,7 +369,7 @@ export default function Landing() {
 
             <div className="lp-pin-contact">
               <p>Want a custom tool built for your business?</p>
-              <a href="mailto:sam@shmake.nz">sam@shmake.nz →</a>
+              <a href="https://shmake.nz/#contact" target="_blank" rel="noopener noreferrer">Get in Touch</a>
             </div>
           </div>
 
