@@ -5,6 +5,7 @@
 @import "tailwindcss";
 
 :root {
+  --embed-offset: 0px;
   --color-bg: #0a0a0a;
   --color-surface: #141414;
   --color-surface-hover: #1c1c1c;
@@ -38,7 +39,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--embed-offset));
 }
 
 code {
@@ -55,7 +56,7 @@ code {
    ============================================================ */
 
 .landing {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--embed-offset));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,7 +110,7 @@ code {
    ============================================================ */
 
 .demo-layout {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--embed-offset));
   display: flex;
   flex-direction: column;
 }

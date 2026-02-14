@@ -205,11 +205,6 @@ export default function Landing() {
   return (
     <div style={styles.page}>
       <div style={styles.container}>
-        <div style={styles.header}>
-          <span style={styles.logo}>SHMAKE</span>
-          <span style={styles.headerSub}>demo sandbox</span>
-        </div>
-
         <div style={styles.gameArea}>
           <h1 style={styles.title}>Tim Tam Dunk Simulator</h1>
           <p style={styles.subtitle}>
@@ -384,17 +379,6 @@ export default function Landing() {
           )}
         </div>
 
-        <div style={styles.footer}>
-          <span>
-            Built by <strong style={{ color: '#a3a3a3' }}>SHMAKE</strong> — I
-            also make <em>useful</em> tools
-          </span>
-          <div style={styles.footerLinks}>
-            <a href="https://shmake.nz" style={styles.footerLink} target="_blank" rel="noopener noreferrer">
-              shmake.nz
-            </a>
-          </div>
-        </div>
       </div>
 
       <style>{`
@@ -422,7 +406,8 @@ export default function Landing() {
 
 const styles = {
   page: {
-    minHeight: '100vh',
+    height: '100vh',
+    overflow: 'hidden',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -433,24 +418,6 @@ const styles = {
   container: {
     width: '100%',
     maxWidth: '460px',
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginBottom: '2rem',
-    justifyContent: 'center',
-  },
-  logo: {
-    fontFamily: "'JetBrains Mono', monospace",
-    fontWeight: 500,
-    fontSize: '0.85rem',
-    letterSpacing: '0.1em',
-    color: '#e5e5e5',
-  },
-  headerSub: {
-    fontSize: '0.8rem',
-    color: '#525252',
   },
   gameArea: {
     background: '#141414',
@@ -717,24 +684,5 @@ const styles = {
   },
   statDot: {
     color: '#333',
-  },
-  footer: {
-    marginTop: '1.5rem',
-    textAlign: 'center',
-    fontSize: '0.78rem',
-    color: '#525252',
-    lineHeight: 1.8,
-  },
-  footerLinks: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-  },
-  footerLink: {
-    color: '#737373',
-    textDecoration: 'none',
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: '0.75rem',
   },
 }

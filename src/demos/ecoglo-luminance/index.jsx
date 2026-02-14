@@ -1182,7 +1182,7 @@ export default function LuminanceTestingModule(){
   const DemoStep=WF_MAP[demoStep];
 
   return(
-    <div style={{fontFamily:T.f,background:T.bg,minHeight:'100vh',color:T.n9}}>
+    <div style={{fontFamily:T.f,background:T.bg,minHeight:'calc(100vh - var(--embed-offset))',color:T.n9}}>
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 
       {/* Dark Room Mode — full screen takeover */}
