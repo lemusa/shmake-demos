@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(npx vite build:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx:*)",
+      "Bash(node -e:*)"
+    ]
+  }
+}

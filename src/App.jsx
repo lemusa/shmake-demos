@@ -29,6 +29,12 @@ const demos = [
     component: lazy(() => import('./demos/ecoglo-luminance')),
     fullPage: true,
   },
+  {
+    path: 'cut',
+    title: 'Cutting Optimizer',
+    component: lazy(() => import('./demos/cut/src/DemoWrapper')),
+    fullPage: true,
+  },
 ]
 
 function DemoLoader() {

@@ -19,11 +19,10 @@ const PIN_REGISTRY = {
     path: '/ecoglo-luminance',
     client: 'Ecoglo',
   },
-  // '5190': {
-  //   path: '/acme-cutting-stock',
-  //   client: 'Acme Corp',
-  //   expires: '2026-04-01',
-  // },
+  '2026': {
+    path: '/cut',
+    client: 'shmakeCut Demo',
+  },
 }
 
 export default PIN_REGISTRY
