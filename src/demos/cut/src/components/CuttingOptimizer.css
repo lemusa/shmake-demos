@@ -1442,6 +1442,19 @@
   line-height: 1;
 }
 
+@media (max-width: 600px) {
+  .tc-mode-tab {
+    gap: 0;
+    padding: 10px 0;
+  }
+  .tc-mode-tab__label {
+    display: none;
+  }
+  .tc-mode-tab__badge {
+    display: none;
+  }
+}
+
 /* GST segmented control */
 .tc-gst-segmented {
   display: flex;
