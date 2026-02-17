@@ -5,7 +5,8 @@
       "Bash(npx vite build:*)",
       "Bash(npm run build:*)",
       "Bash(npx:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(node scripts/generate-profiles.mjs:*)"
     ]
   }
 }

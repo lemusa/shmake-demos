@@ -52,6 +52,8 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
       showCosting: true,
       showJobDetails: false,
       allowPdfExport: true,
+      enableLeadCapture: true,
+      enableSendToYard: true,
       disclaimer: 'This calculator provides estimates only. Always verify quantities with a qualified builder or supplier before purchasing.',
     },
   };
@@ -470,6 +472,26 @@ function DetailsTab({ tenant, setTenant, isNew }) {
                 onChange={(e) => updateSettings('allowPdfExport', e.target.checked)}
               />
               Allow PDF export
+            </label>
+          </div>
+          <div className="admin-field admin-field--checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={tenant.settings?.enableLeadCapture ?? true}
+                onChange={(e) => updateSettings('enableLeadCapture', e.target.checked)}
+              />
+              Require name &amp; email before PDF download
+            </label>
+          </div>
+          <div className="admin-field admin-field--checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={tenant.settings?.enableSendToYard ?? true}
+                onChange={(e) => updateSettings('enableSendToYard', e.target.checked)}
+              />
+              Show "Send to Yard" enquiry button
             </label>
           </div>
           <div className="admin-field">

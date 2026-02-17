@@ -15,6 +15,9 @@ import FencingCalculator from './FencingCalculator';
 import FencingResults from './FencingResults';
 import WallCalculator from './WallCalculator';
 import WallResults from './WallResults';
+import LeadCaptureModal from './LeadCaptureModal';
+import { initAnalytics, trackModeSelected, trackProductsSelected, trackCalculationCompleted, trackPdfRequested, trackLeadCaptured, trackSendToYard, getAnalyticsSessionId } from '../lib/analytics';
+import { supabasePublic } from '../lib/supabase';
 import './CuttingOptimizer.css';
 
 // ============================================
@@ -408,7 +411,8 @@ function ProductSelector({ products, presets, activePreset, selectedProduct, onP
         p.profile?.toLowerCase().includes(q) ||
         p.treatment?.toLowerCase().includes(q) ||
         p.species?.toLowerCase().includes(q) ||
-        p.category?.toLowerCase().includes(q)
+        p.category?.toLowerCase().includes(q) ||
+        p.grade?.toLowerCase().includes(q)
       );
     }
     return pool;
@@ -443,11 +447,17 @@ function ProductSelector({ products, presets, activePreset, selectedProduct, onP
       >
         {selectedProduct ? (
           <>
+            {selectedProduct.imageUrl && (
+              <img src={selectedProduct.imageUrl} alt="" className="tc-ps-trigger__thumb" />
+            )}
             <div className="tc-ps-trigger__dims">{selectedProduct.profile}</div>
             <div className="tc-ps-trigger__info">
               <div className="tc-ps-trigger__name">{getProductLabel(selectedProduct)}</div>
               <div className="tc-ps-trigger__meta">
                 <TreatmentBadge treatment={selectedProduct.treatment} />
+                {selectedProduct.grade && selectedProduct.grade !== '—' && (
+                  <span className="tc-ps-badge tc-ps-badge--grade">{selectedProduct.grade}</span>
+                )}
                 <span>{selectedProduct.lengths?.map(l => `${l / 1000}m`).join(' · ')}</span>
               </div>
             </div>
@@ -517,6 +527,9 @@ function ProductSelector({ products, presets, activePreset, selectedProduct, onP
                     className={`tc-ps-row ${isSel ? 'tc-ps-row--selected' : ''}`}
                     onClick={() => handleSelect(p)}
                   >
+                    {p.imageUrl && (
+                      <img src={p.imageUrl} alt="" className="tc-ps-row__thumb" />
+                    )}
                     <div className={`tc-ps-row__dims ${isSel ? 'tc-ps-row__dims--selected' : ''}`}>
                       {p.profile}
                     </div>
@@ -524,6 +537,9 @@ function ProductSelector({ products, presets, activePreset, selectedProduct, onP
                       <div className="tc-ps-row__name">{getProductLabel(p)}</div>
                       <div className="tc-ps-row__meta">
                         <TreatmentBadge treatment={p.treatment} />
+                        {p.grade && p.grade !== '—' && (
+                          <span className="tc-ps-badge tc-ps-badge--grade">{p.grade}</span>
+                        )}
                       </div>
                     </div>
                     <div className={`tc-ps-row__price ${isSel ? 'tc-ps-row__price--selected' : ''}`}>
@@ -596,12 +612,22 @@ export default function CuttingOptimizer({ config }) {
   const previewControlRef = useRef(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
+  // Lead capture state
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
+  const [leadCapturedThisSession, setLeadCapturedThisSession] = useState(false);
+  const [showSendConfirmation, setShowSendConfirmation] = useState(false);
+
+  // Feature flags (on by default, tenant can disable)
+  const enableLeadCapture = configSettings.enableLeadCapture !== false;
+  const enableSendToYard = configSettings.enableSendToYard !== false;
+
   // GST config from tenant settings
   const gstMode = configSettings.gstMode || 'excl';
   const gstRate = configSettings.gstRate || 0.15;
 
-  // Initialize from first preset
+  // Initialize analytics + first preset
   useEffect(() => {
+    initAnalytics(tenant.id);
     if (presets.length > 0) {
       applyPreset(presets[0].id);
     }
@@ -670,6 +696,7 @@ export default function CuttingOptimizer({ config }) {
   const selectProduct = (product) => {
     setSelectedProduct(product);
     if (product) {
+      trackProductsSelected(activeMode);
       const newStock = productToStockLengths(product);
       setStockLengths(newStock);
       setNextStockId(newStock.length + 1);
@@ -731,6 +758,12 @@ export default function CuttingOptimizer({ config }) {
       }
       setResult(res);
       setIsCalculating(false);
+      trackCalculationCompleted('general', {
+        totalCuts: res.summary?.totalCutsMade,
+        stockRequired: res.summary?.stockRequired,
+        efficiency: res.summary?.overallEfficiency,
+        estimatedCost: res.summary?.totalCost,
+      });
     }, 0);
   };
 
@@ -877,6 +910,95 @@ export default function CuttingOptimizer({ config }) {
     });
   };
 
+  // Build lead payload from current mode's results
+  const buildLeadPayload = () => {
+    let summaryText = '';
+    let estimatedValue = null;
+    let specification = {};
+    let cutList = {};
+
+    if (activeMode === 'general' && result) {
+      const productLabel = getProductLabel(selectedProduct) || 'Custom';
+      summaryText = `${productLabel} — ${result.summary?.totalCutsMade || 0} pieces, ${result.summary?.overallEfficiency || 0}% efficiency`;
+      estimatedValue = showCosting ? (result.summary?.totalCost || null) : null;
+      specification = { selectedProduct, stockLengths, requiredCuts, settings, jobDetails };
+      cutList = { result, savedPlans };
+    } else if (activeMode === 'fencing' && fencingResults) {
+      const cs = fencingResults.combinedSummary;
+      summaryText = `${cs.totalLengthM?.toFixed(1) || '?'}m fence, ${fencingResults.fenceSpec?.sections?.length || 1} section${(fencingResults.fenceSpec?.sections?.length || 1) !== 1 ? 's' : ''}`;
+      estimatedValue = showCosting ? (cs.totalCost || null) : null;
+      specification = { fenceSpec: fencingResults.fenceSpec };
+      cutList = { componentPlans: fencingResults.componentPlans, combinedSummary: cs };
+    } else if (activeMode === 'walls' && wallResults) {
+      const cs = wallResults.combinedSummary;
+      const wallCount = wallResults.wallSpec?.walls?.length || 1;
+      summaryText = `Wall frame — ${wallCount} wall${wallCount !== 1 ? 's' : ''}`;
+      estimatedValue = showCosting ? (cs.totalCost || null) : null;
+      specification = { wallSpec: wallResults.wallSpec };
+      cutList = { componentPlans: wallResults.componentPlans, combinedSummary: cs };
+    }
+
+    return { summaryText, estimatedValue, specification, cutList };
+  };
+
+  // Gate function: show lead capture modal or download directly
+  const handleExportAction = () => {
+    trackPdfRequested(activeMode);
+
+    if (!enableLeadCapture || leadCapturedThisSession) {
+      handleDownloadPDF();
+      return;
+    }
+
+    setShowLeadCapture(true);
+  };
+
+  // Handle lead capture form submission (action comes from modal: 'pdf' or 'send_to_yard')
+  const handleLeadSubmit = async (leadData) => {
+    const { action, email, name, phone, notes } = leadData;
+    const capturePoint = action === 'send_to_yard' ? 'send_to_yard' : 'pdf_export';
+    const { summaryText, estimatedValue, specification, cutList } = buildLeadPayload();
+
+    if (supabasePublic && tenant.id !== 'demo') {
+      try {
+        await supabasePublic.from('cut_leads').insert({
+          tenant_id: tenant.id,
+          session_id: getAnalyticsSessionId(),
+          name,
+          email,
+          phone,
+          notes,
+          capture_point: capturePoint,
+          mode: activeMode,
+          summary_text: summaryText,
+          estimated_value: estimatedValue,
+          specification,
+          cut_list: cutList,
+        });
+      } catch (e) {
+        console.warn('shmakeCut: Failed to save lead', e);
+      }
+    }
+
+    if (action === 'send_to_yard') {
+      trackSendToYard(activeMode);
+      trackLeadCaptured(activeMode, 'send_to_yard');
+    } else {
+      trackLeadCaptured(activeMode, 'pdf_export');
+    }
+
+    setLeadCapturedThisSession(true);
+    setShowLeadCapture(false);
+
+    // PDF downloads in both paths
+    handleDownloadPDF();
+
+    // Show send confirmation if they sent to yard
+    if (action === 'send_to_yard') {
+      setShowSendConfirmation(true);
+    }
+  };
+
   const groupedPlan = useMemo(
     () => (result?.plan ? groupCuttingPatterns(result.plan) : []),
     [result]
@@ -928,6 +1050,36 @@ export default function CuttingOptimizer({ config }) {
         <ImportModal onImport={handleImport} onClose={() => setShowImport(false)} unit={unit} />
       )}
 
+      {showLeadCapture && (
+        <LeadCaptureModal
+          tenantName={tenant.name}
+          enableSendToYard={enableSendToYard}
+          onSubmit={handleLeadSubmit}
+          onClose={() => setShowLeadCapture(false)}
+        />
+      )}
+
+      {showSendConfirmation && (
+        <div className="tc-modal-overlay" onClick={() => setShowSendConfirmation(false)}>
+          <div className="tc-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="tc-modal-body">
+              <div className="tc-send-confirmation">
+                <div className="tc-send-confirmation__icon"><Check size={32} /></div>
+                <div className="tc-send-confirmation__title">Sent!</div>
+                <div className="tc-send-confirmation__text">
+                  {tenant.name} will be in touch about your cutting plan.
+                </div>
+              </div>
+            </div>
+            <div className="tc-modal-footer" style={{ justifyContent: 'center' }}>
+              <button onClick={() => setShowSendConfirmation(false)} className="tc-btn tc-btn--primary">
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mode + Config bar */}
       <div className="tc-topbar">
         <div className="tc-mode-selector">
@@ -944,7 +1096,7 @@ export default function CuttingOptimizer({ config }) {
               <button
                 key={mode.id}
                 className={`tc-mode-tab ${isActive ? 'tc-mode-tab--active' : ''} ${isDisabled ? 'tc-mode-tab--disabled' : ''}`}
-                onClick={() => !isDisabled && setActiveMode(mode.id)}
+                onClick={() => { if (!isDisabled) { setActiveMode(mode.id); trackModeSelected(mode.id); } }}
                 disabled={isDisabled}
               >
                 <span className="tc-mode-tab__icon">{modeIcons[mode.id](color)}</span>
@@ -1224,7 +1376,7 @@ export default function CuttingOptimizer({ config }) {
                 Save &amp; Add Another
               </button>
               {configSettings.allowPdfExport && (
-                <button onClick={handleDownloadPDF} className="tc-btn tc-btn--secondary tc-btn--full">
+                <button onClick={handleExportAction} className="tc-btn tc-btn--secondary tc-btn--full">
                   <Download size={16} />
                   Export PDF{savedPlans.length > 0 ? ` (${savedPlans.length + 1} plans)` : ''}
                 </button>
@@ -1232,7 +1384,7 @@ export default function CuttingOptimizer({ config }) {
             </div>
           )}
           {!result && savedPlans.length > 0 && configSettings.allowPdfExport && (
-            <button onClick={handleDownloadPDF} className="tc-btn tc-btn--secondary tc-btn--full">
+            <button onClick={handleExportAction} className="tc-btn tc-btn--secondary tc-btn--full">
               <Download size={16} />
               Export PDF ({savedPlans.length} plan{savedPlans.length !== 1 ? 's' : ''})
             </button>
@@ -1388,7 +1540,11 @@ export default function CuttingOptimizer({ config }) {
               settings={settings}
               unit={unit}
               onCalculateStart={() => setIsCalculating(true)}
-              onResults={(r) => { setFencingResults(r); setIsCalculating(false); }}
+              onResults={(r) => {
+                setFencingResults(r);
+                setIsCalculating(false);
+                trackCalculationCompleted('fencing', r.combinedSummary);
+              }}
               adjustForGst={showCosting ? adjustForGst : null}
               showGstInclusive={showGstInclusive}
               showCosting={showCosting}
@@ -1425,7 +1581,7 @@ export default function CuttingOptimizer({ config }) {
               </div>
             )}
             {fencingResults && configSettings.allowPdfExport && (
-              <button onClick={handleDownloadPDF} className="tc-btn tc-btn--secondary tc-btn--full" style={{ marginTop: 8 }}>
+              <button onClick={handleExportAction} className="tc-btn tc-btn--secondary tc-btn--full" style={{ marginTop: 8 }}>
                 <Download size={16} />
                 Export PDF
               </button>
@@ -1444,7 +1600,11 @@ export default function CuttingOptimizer({ config }) {
               settings={settings}
               unit={unit}
               onCalculateStart={() => setIsCalculating(true)}
-              onResults={(r) => { setWallResults(r); setIsCalculating(false); }}
+              onResults={(r) => {
+                setWallResults(r);
+                setIsCalculating(false);
+                trackCalculationCompleted('walls', r.combinedSummary);
+              }}
               adjustForGst={showCosting ? adjustForGst : null}
               showGstInclusive={showGstInclusive}
               showCosting={showCosting}
@@ -1479,7 +1639,7 @@ export default function CuttingOptimizer({ config }) {
               </div>
             )}
             {wallResults && configSettings.allowPdfExport && (
-              <button onClick={handleDownloadPDF} className="tc-btn tc-btn--secondary tc-btn--full" style={{ marginTop: 8 }}>
+              <button onClick={handleExportAction} className="tc-btn tc-btn--secondary tc-btn--full" style={{ marginTop: 8 }}>
                 <Download size={16} />
                 Export PDF
               </button>

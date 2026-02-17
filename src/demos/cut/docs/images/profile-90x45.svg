@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 104" width="140" height="104">
+  <defs>
+    <linearGradient id="wood_90x45" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8C06A"/>
+      <stop offset="50%" stop-color="#D4A44A"/>
+      <stop offset="100%" stop-color="#B8882E"/>
+    </linearGradient>
+    <clipPath id="clip_90x45">
+      <rect x="10" y="8" width="120" height="60" rx="1"/>
+    </clipPath>
+  </defs>
+  <!-- Shadow -->
+  <rect x="11.5" y="9.5" width="120" height="60" rx="1.5" fill="#00000015"/>
+  <!-- Wood body -->
+  <rect x="10" y="8" width="120" height="60" rx="1.5" fill="url(#wood_90x45)" stroke="#B8882E" stroke-width="1.2"/>
+  <!-- Grain texture -->
+  <g clip-path="url(#clip_90x45)" transform="translate(10,8)">
+    <ellipse cx="66.19444444444444" cy="38.168930041152265" rx="30.87879188712522" ry="7.458300264550265" fill="none" stroke="#8B6914" stroke-width="0.7345747599451303" opacity="0.09800068587105625"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="30.396858465608467" ry="16.21733355379189" fill="none" stroke="#8B6914" stroke-width="0.9036316872427983" opacity="0.11913280178326476"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="47.9149250440917" ry="24.976366843033507" fill="none" stroke="#8B6914" stroke-width="1.0726886145404664" opacity="0.14026491769547325"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="65.43299162257496" ry="33.73540013227513" fill="none" stroke="#8B6914" stroke-width="1.2417455418381345" opacity="0.16139703360768176"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="82.95105820105822" ry="42.49443342151676" fill="none" stroke="#8B6914" stroke-width="0.6108024691358025" opacity="0.08252914951989027"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="82.46912477954143" ry="42.253466710758374" fill="none" stroke="#8B6914" stroke-width="0.7798593964334706" opacity="0.10366126543209878"/><ellipse cx="66.19444444444444" cy="38.168930041152265" rx="99.98719135802469" ry="51.0125" fill="none" stroke="#8B6914" stroke-width="0.9489163237311385" opacity="0.12479338134430727"/><line x1="8.34130658436214" y1="0" x2="7.191229423868313" y2="60" stroke="#6B4F10" stroke-width="0.613897462277092" opacity="0.06529192386831276"/><line x1="20.477160493827164" y1="0" x2="20.595010288065847" y2="60" stroke="#6B4F10" stroke-width="0.698425925925926" opacity="0.07797119341563785"/><line x1="32.61301440329218" y1="0" x2="33.99879115226338" y2="60" stroke="#6B4F10" stroke-width="0.7829543895747599" opacity="0.09065046296296296"/><line x1="44.748868312757196" y1="0" x2="47.4025720164609" y2="60" stroke="#6B4F10" stroke-width="0.467482853223594" opacity="0.043329732510288065"/><line x1="44.88472222222223" y1="0" x2="42.806352880658444" y2="60" stroke="#6B4F10" stroke-width="0.552011316872428" opacity="0.056009002057613166"/><line x1="57.02057613168724" y1="0" x2="56.210133744855966" y2="60" stroke="#6B4F10" stroke-width="0.636539780521262" opacity="0.06868827160493828"/><line x1="69.15643004115226" y1="0" x2="69.6139146090535" y2="60" stroke="#6B4F10" stroke-width="0.7210682441700961" opacity="0.08136754115226337"/><line x1="81.29228395061727" y1="0" x2="83.01769547325102" y2="60" stroke="#6B4F10" stroke-width="0.4055967078189301" opacity="0.09404681069958848"/><line x1="93.42813786008232" y1="0" x2="96.42147633744857" y2="60" stroke="#6B4F10" stroke-width="0.4901251714677641" opacity="0.04672608024691358"/><line x1="93.56399176954733" y1="0" x2="91.8252572016461" y2="60" stroke="#6B4F10" stroke-width="0.5746536351165981" opacity="0.059405349794238685"/>
+  </g>
+  <!-- Edge highlight -->
+  <rect x="10.5" y="8.5" width="119" height="3" rx="0.5" fill="#fff" opacity="0.15"/>
+  <!-- Label -->
+  <text x="70" y="92" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#475569">90×45</text>
+</svg>

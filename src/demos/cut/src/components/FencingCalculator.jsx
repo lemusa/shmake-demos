@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Plus, X, ChevronDown, AlertTriangle, Info, Ruler, AlignHorizontalDistributeCenter, Scissors } from 'lucide-react';
+import MiniProductSelector from './MiniProductSelector';
 import {
   calculateCuttingPlan,
   groupCuttingPatterns,
@@ -125,7 +126,6 @@ function FenceSectionRow({ section, onChange, onRemove, canRemove, onFocus }) {
 // ============================================
 
 function FenceComponentRow({ label, products, selectedId, onChange, preview, children, optional, enabled, onToggle }) {
-  const selectedProduct = products.find(p => p.id === selectedId);
   return (
     <div className={`tc-fencing-component ${optional && !enabled ? 'tc-fencing-component--disabled' : ''}`}>
       <div className="tc-fencing-component-top">
@@ -144,23 +144,12 @@ function FenceComponentRow({ label, products, selectedId, onChange, preview, chi
       </div>
       {(!optional || enabled) && (
         <div className="tc-fencing-component-body">
-          <div className="tc-fencing-component-select-row">
-            {selectedProduct?.imageUrl && (
-              <img src={selectedProduct.imageUrl} alt="" className="tc-product-thumb" />
-            )}
-            <div className="tc-fencing-component-select">
-              <select
-                value={selectedId || ''}
-                onChange={(e) => onChange({ productId: e.target.value })}
-              >
-                <option value="">Select {label.toLowerCase()}...</option>
-                {products.map(p => (
-                  <option key={p.id} value={p.id}>{getProductLabel(p)}</option>
-                ))}
-              </select>
-              <ChevronDown size={14} className="tc-product-dropdown-icon" />
-            </div>
-          </div>
+          <MiniProductSelector
+            products={products}
+            selectedId={selectedId}
+            onChange={(id) => onChange({ productId: id })}
+            placeholder={`Select ${label.toLowerCase()}…`}
+          />
           {children}
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Plus, X, ChevronDown, AlertTriangle, DoorOpen, Square, Ruler } from 'lucide-react';
+import MiniProductSelector from './MiniProductSelector';
 import {
   calculateCuttingPlan,
   groupCuttingPatterns,
@@ -777,16 +778,12 @@ export default function WallCalculator({
                 <span className="tc-fencing-component-label">Framing timber</span>
               </div>
               <div className="tc-fencing-component-body">
-                <div className="tc-fencing-component-select">
-                  <select value={components.framing.productId}
-                    onChange={(e) => setComponents(c => ({ ...c, framing: { ...c.framing, productId: e.target.value } }))}>
-                    <option value="">Select framing...</option>
-                    {framingProducts.map(p => (
-                      <option key={p.id} value={p.id}>{getProductLabel(p)}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={14} className="tc-product-dropdown-icon" />
-                </div>
+                <MiniProductSelector
+                  products={framingProducts}
+                  selectedId={components.framing.productId}
+                  onChange={(id) => setComponents(c => ({ ...c, framing: { ...c.framing, productId: id } }))}
+                  placeholder="Select framing…"
+                />
               </div>
             </div>
 
@@ -802,16 +799,12 @@ export default function WallCalculator({
               </div>
               {!components.plates.useFraming && (
                 <div className="tc-fencing-component-body">
-                  <div className="tc-fencing-component-select">
-                    <select value={components.plates.productId}
-                      onChange={(e) => setComponents(c => ({ ...c, plates: { ...c.plates, productId: e.target.value } }))}>
-                      <option value="">Select plates...</option>
-                      {framingProducts.map(p => (
-                        <option key={p.id} value={p.id}>{getProductLabel(p)}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={14} className="tc-product-dropdown-icon" />
-                  </div>
+                  <MiniProductSelector
+                    products={framingProducts}
+                    selectedId={components.plates.productId}
+                    onChange={(id) => setComponents(c => ({ ...c, plates: { ...c.plates, productId: id } }))}
+                    placeholder="Select plates…"
+                  />
                 </div>
               )}
             </div>
@@ -831,16 +824,12 @@ export default function WallCalculator({
               </div>
               {!components.lintels.useFraming && (
                 <div className="tc-fencing-component-body">
-                  <div className="tc-fencing-component-select">
-                    <select value={components.lintels.productId}
-                      onChange={(e) => setComponents(c => ({ ...c, lintels: { ...c.lintels, productId: e.target.value } }))}>
-                      <option value="">Select lintel timber...</option>
-                      {framingProducts.map(p => (
-                        <option key={p.id} value={p.id}>{getProductLabel(p)}</option>
-                      ))}
-                    </select>
-                    <ChevronDown size={14} className="tc-product-dropdown-icon" />
-                  </div>
+                  <MiniProductSelector
+                    products={framingProducts}
+                    selectedId={components.lintels.productId}
+                    onChange={(id) => setComponents(c => ({ ...c, lintels: { ...c.lintels, productId: id } }))}
+                    placeholder="Select lintel timber…"
+                  />
                   <p className="tc-inline-hint" style={{ marginTop: 4 }}>
                     Lintel size/grade must be confirmed by your engineer or designer for the specific span and load condition.
                   </p>
