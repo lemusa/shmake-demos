@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:portal": "vite --config vite.portal.config.js",
     "build": "vite build",
+    "build:portal": "vite build --config vite.portal.config.js",
     "preview": "vite preview"
   },
   "dependencies": {

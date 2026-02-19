@@ -6,7 +6,9 @@
       "Bash(npm run build:*)",
       "Bash(npx:*)",
       "Bash(node -e:*)",
-      "Bash(node scripts/generate-profiles.mjs:*)"
+      "Bash(node scripts/generate-profiles.mjs:*)",
+      "Bash(dir:*)",
+      "Bash(npm run build:portal:*)"
     ]
   }
 }
