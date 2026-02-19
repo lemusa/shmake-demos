@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 67" width="140" height="67">
+  <defs>
+    <linearGradient id="wood_board_100x19" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8C06A"/>
+      <stop offset="50%" stop-color="#D4A44A"/>
+      <stop offset="100%" stop-color="#B8882E"/>
+    </linearGradient>
+    <clipPath id="clip_board_100x19">
+      <rect x="10" y="8" width="120" height="23" rx="1"/>
+    </clipPath>
+  </defs>
+  <rect x="11.5" y="9.5" width="120" height="23" rx="1.5" fill="#00000015"/>
+  <rect x="10" y="8" width="120" height="23" rx="1.5" fill="url(#wood_board_100x19)" stroke="#B8882E" stroke-width="1.2"/>
+  <g clip-path="url(#clip_board_100x19)" transform="translate(10,8)">
+    <ellipse cx="66.8266756113867" cy="8.409199071218445" rx="48.9" ry="8.4" fill="none" stroke="#8B6914" stroke-width="1.13" opacity="0.130"/><ellipse cx="66.8266756113867" cy="8.409199071218445" rx="75.9" ry="11.4" fill="none" stroke="#8B6914" stroke-width="0.95" opacity="0.100"/><ellipse cx="66.8266756113867" cy="8.409199071218445" rx="105.6" ry="15.7" fill="none" stroke="#8B6914" stroke-width="0.89" opacity="0.100"/><line x1="6.1" y1="0" x2="5.6" y2="23" stroke="#6B4F10" stroke-width="0.79" opacity="0.076"/><line x1="16.2" y1="0" x2="16.9" y2="23" stroke="#6B4F10" stroke-width="0.41" opacity="0.095"/><line x1="31.0" y1="0" x2="31.4" y2="23" stroke="#6B4F10" stroke-width="0.46" opacity="0.076"/><line x1="43.1" y1="0" x2="44.9" y2="23" stroke="#6B4F10" stroke-width="0.41" opacity="0.042"/><line x1="53.4" y1="0" x2="54.8" y2="23" stroke="#6B4F10" stroke-width="0.77" opacity="0.065"/><line x1="64.7" y1="0" x2="63.7" y2="23" stroke="#6B4F10" stroke-width="0.80" opacity="0.087"/><line x1="78.8" y1="0" x2="77.8" y2="23" stroke="#6B4F10" stroke-width="0.78" opacity="0.100"/><line x1="92.3" y1="0" x2="92.7" y2="23" stroke="#6B4F10" stroke-width="0.54" opacity="0.063"/><line x1="101.4" y1="0" x2="99.7" y2="23" stroke="#6B4F10" stroke-width="0.80" opacity="0.097"/><line x1="114.2" y1="0" x2="114.3" y2="23" stroke="#6B4F10" stroke-width="0.55" opacity="0.051"/>
+  </g>
+  <rect x="10.5" y="8.5" width="119" height="3" rx="0.5" fill="#fff" opacity="0.15"/>
+  <text x="70" y="55" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#475569">100×19</text>
+</svg>

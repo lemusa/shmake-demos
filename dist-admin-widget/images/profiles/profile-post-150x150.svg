@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 164" width="140" height="164">
+  <defs>
+    <linearGradient id="wood_post_150x150" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#DABA60"/>
+      <stop offset="50%" stop-color="#C49A3C"/>
+      <stop offset="100%" stop-color="#A07828"/>
+    </linearGradient>
+    <clipPath id="clip_post_150x150">
+      <rect x="10" y="8" width="120" height="120" rx="1"/>
+    </clipPath>
+  </defs>
+  <rect x="11.5" y="9.5" width="120" height="120" rx="1.5" fill="#00000015"/>
+  <rect x="10" y="8" width="120" height="120" rx="1.5" fill="url(#wood_post_150x150)" stroke="#A07828" stroke-width="1.2"/>
+  <g clip-path="url(#clip_post_150x150)" transform="translate(10,8)">
+    <ellipse cx="52.393191110708926" cy="60.72630225934675" rx="42.7" ry="28.3" fill="none" stroke="#8B6914" stroke-width="0.63" opacity="0.111"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="46.3" ry="36.3" fill="none" stroke="#8B6914" stroke-width="1.14" opacity="0.085"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="62.3" ry="40.6" fill="none" stroke="#8B6914" stroke-width="0.81" opacity="0.179"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="64.4" ry="51.2" fill="none" stroke="#8B6914" stroke-width="0.73" opacity="0.147"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="79.5" ry="55.5" fill="none" stroke="#8B6914" stroke-width="0.51" opacity="0.174"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="88.6" ry="66.8" fill="none" stroke="#8B6914" stroke-width="0.72" opacity="0.141"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="94.2" ry="74.7" fill="none" stroke="#8B6914" stroke-width="0.74" opacity="0.117"/><ellipse cx="52.393191110708926" cy="60.72630225934675" rx="107.0" ry="80.3" fill="none" stroke="#8B6914" stroke-width="1.24" opacity="0.163"/><line x1="6.5" y1="0" x2="6.7" y2="120" stroke="#6B4F10" stroke-width="0.76" opacity="0.071"/><line x1="16.5" y1="0" x2="15.8" y2="120" stroke="#6B4F10" stroke-width="0.76" opacity="0.056"/><line x1="31.4" y1="0" x2="32.5" y2="120" stroke="#6B4F10" stroke-width="0.74" opacity="0.061"/><line x1="40.4" y1="0" x2="38.8" y2="120" stroke="#6B4F10" stroke-width="0.55" opacity="0.089"/><line x1="55.8" y1="0" x2="57.4" y2="120" stroke="#6B4F10" stroke-width="0.58" opacity="0.068"/><line x1="64.6" y1="0" x2="64.9" y2="120" stroke="#6B4F10" stroke-width="0.78" opacity="0.071"/><line x1="79.0" y1="0" x2="77.1" y2="120" stroke="#6B4F10" stroke-width="0.47" opacity="0.081"/><line x1="91.1" y1="0" x2="91.7" y2="120" stroke="#6B4F10" stroke-width="0.72" opacity="0.070"/><line x1="104.1" y1="0" x2="103.6" y2="120" stroke="#6B4F10" stroke-width="0.78" opacity="0.043"/><line x1="115.9" y1="0" x2="116.6" y2="120" stroke="#6B4F10" stroke-width="0.50" opacity="0.068"/>
+  </g>
+  <rect x="10.5" y="8.5" width="119" height="3" rx="0.5" fill="#fff" opacity="0.15"/>
+  <text x="70" y="152" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#475569">150×150</text>
+</svg>
