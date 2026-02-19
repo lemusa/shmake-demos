@@ -19,8 +19,21 @@ function portalSpaFallback() {
   };
 }
 
+// Rename portal.html → index.html in the build output so Vercel's rewrite works
+function renamePortalToIndex() {
+  return {
+    name: 'rename-portal-to-index',
+    enforce: 'post',
+    generateBundle(_, bundle) {
+      if (bundle['portal.html']) {
+        bundle['portal.html'].fileName = 'index.html';
+      }
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), portalSpaFallback()],
+  plugins: [react(), portalSpaFallback(), renamePortalToIndex()],
   resolve: {
     alias: {
       '@shmakecut': path.resolve(__dirname, 'src/demos/cut/src'),
