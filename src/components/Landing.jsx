@@ -6,11 +6,11 @@ import PIN_REGISTRY from '../pinRegistry'
 
 const STAGES = [
   { threshold: 0, label: 'Dry', color: '#8B4513', integrity: 100 },
-  { threshold: 8, label: 'Slightly Damp', color: '#7a3b10', integrity: 90 },
-  { threshold: 18, label: 'Nicely Soaked', color: '#6a300d', integrity: 70 },
-  { threshold: 35, label: 'Dangerously Soggy', color: '#5a260a', integrity: 45 },
-  { threshold: 55, label: 'Structural Failure Imminent', color: '#4a1c07', integrity: 20 },
-  { threshold: 75, label: 'CRITICAL', color: '#3a1205', integrity: 5 },
+  { threshold: 12, label: 'Slightly Damp', color: '#7a3b10', integrity: 85 },
+  { threshold: 30, label: 'Nicely Soaked', color: '#6a300d', integrity: 65 },
+  { threshold: 50, label: 'Dangerously Soggy', color: '#5a260a', integrity: 40 },
+  { threshold: 65, label: 'Structural Failure Imminent', color: '#4a1c07', integrity: 20 },
+  { threshold: 80, label: 'CRITICAL', color: '#3a1205', integrity: 5 },
 ]
 
 const RESULTS = {
@@ -37,8 +37,8 @@ function getResult(dunkTime, collapsed) {
     const msg = DISASTER_MESSAGES[Math.floor(Math.random() * DISASTER_MESSAGES.length)]
     return { ...RESULTS.disaster, subtitle: msg }
   }
-  if (dunkTime < 8) return RESULTS.dry
-  if (dunkTime < 20) return RESULTS.light
+  if (dunkTime < 12) return RESULTS.dry
+  if (dunkTime < 30) return RESULTS.light
   if (dunkTime < 50) return RESULTS.perfect
   return RESULTS.risky
 }
@@ -132,7 +132,7 @@ export default function Landing() {
       const progress = Math.min((elapsed / 5000) * 100, 100)
       setDunkProgress(progress)
       dunkProgressRef.current = progress
-      setBiscuitY(Math.min(progress * 0.6, 55))
+      setBiscuitY(Math.min(progress * 0.9, 82))
       if (progress > 35) setWobble(Math.sin(elapsed / 80) * (progress - 35) * 0.08)
       if (progress > 45 && Math.random() < 0.03) {
         setCrumbs(prev => [...prev.slice(-8), { id: Date.now() + Math.random(), x: 45 + Math.random() * 10, delay: Math.random() * 0.2 }])
@@ -213,6 +213,7 @@ export default function Landing() {
           pointer-events: none;
         }
         .lp-pin > * { position: relative; z-index: 1; }
+        .lp-pin-logo { width: 120px; margin-bottom: 28px; }
         .lp-pin h1 { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 10px; }
         .lp-pin .sub { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 36px; }
         .lp-pin-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
@@ -252,6 +253,14 @@ export default function Landing() {
           background: #f5f5f5; padding: 40px 32px;
           display: flex; flex-direction: column; align-items: center; justify-content: center;
           touch-action: none; -webkit-touch-callout: none; user-select: none;
+        }
+        @media (max-width: 720px) {
+          .lp-tt { display: none; }
+          .lp-pin { padding: 48px 24px; }
+          .lp-pin-logo { width: 180px; margin-bottom: 32px; }
+          .lp-pin h1 { font-size: 24px; white-space: nowrap; }
+          .lp-pin .sub { font-size: 15px; max-width: 90%; }
+          .lp-pin-contact { width: 80%; }
         }
         .lp-tt-label { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 2px; }
         .lp-tt-sub { font-size: 12px; color: #999; margin-bottom: 20px; }
@@ -350,6 +359,7 @@ export default function Landing() {
         <div className="lp-grid">
           {/* Orange — Pin Entry */}
           <div className="lp-pin">
+            <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="lp-pin-logo" />
             <h1>I've built something for you</h1>
             <p className="sub">Enter your pin to check it out.</p>
 
