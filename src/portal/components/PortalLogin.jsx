@@ -31,7 +31,9 @@ export default function PortalLogin({ supabase, onLogin, serverError }) {
   return (
     <div className="portal-login">
       <div className="portal-login-card">
-        <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="portal-login-logo" />
+        <div className="portal-login-header">
+          <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="portal-login-logo" />
+        </div>
         <h1>Sign in to your portal</h1>
         <p>Manage your products, leads, and embed settings.</p>
         <form onSubmit={handleLogin}>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Users, Package, Code, LogOut, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, Users, Package, Code, LogOut, Menu, X } from 'lucide-react';
 import Overview from '../pages/shmakecut/Overview';
 import Leads from '../pages/shmakecut/Leads';
 import Products from '../pages/shmakecut/Products';
@@ -30,6 +30,13 @@ export default function PortalLayout({ supabase, user, portalUser, tenant, onLog
       {/* Top bar */}
       <header className="portal-topbar">
         <div className="portal-topbar-left">
+          <button
+            className="portal-mobile-burger"
+            onClick={() => setMobileNavOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </button>
           <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="portal-topbar-logo" />
           <span className="portal-topbar-tenant">{tenant.name}</span>
         </div>
@@ -41,8 +48,48 @@ export default function PortalLayout({ supabase, user, portalUser, tenant, onLog
         </div>
       </header>
 
+      {/* Mobile drawer */}
+      {mobileNavOpen && (
+        <div className="portal-drawer-backdrop" onClick={() => setMobileNavOpen(false)} />
+      )}
+      <nav className={`portal-drawer ${mobileNavOpen ? 'portal-drawer--open' : ''}`}>
+        <div className="portal-drawer-header">
+          <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="portal-drawer-logo" />
+          <button
+            className="portal-drawer-close"
+            onClick={() => setMobileNavOpen(false)}
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="portal-drawer-tenant">{tenant.name}</div>
+        <div className="portal-drawer-nav">
+          {NAV_ITEMS.map(item => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                className={`portal-drawer-item ${activePage === item.id ? 'portal-drawer-item--active' : ''}`}
+                onClick={() => { setActivePage(item.id); setMobileNavOpen(false); }}
+              >
+                <Icon size={18} />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+        <div className="portal-drawer-footer">
+          <span className="portal-drawer-user">{portalUser.name || user.email}</span>
+          <button onClick={onLogout} className="portal-drawer-logout">
+            <LogOut size={16} />
+            Sign out
+          </button>
+        </div>
+      </nav>
+
       <div className="portal-body">
-        {/* Sidebar */}
+        {/* Sidebar (desktop) */}
         <nav className="portal-sidebar">
           <div className="portal-sidebar-section">
             <div className="portal-sidebar-section-label">shmakeCut</div>
@@ -52,7 +99,7 @@ export default function PortalLayout({ supabase, user, portalUser, tenant, onLog
                 <button
                   key={item.id}
                   className={`portal-nav-item ${activePage === item.id ? 'portal-nav-item--active' : ''}`}
-                  onClick={() => { setActivePage(item.id); setMobileNavOpen(false); }}
+                  onClick={() => setActivePage(item.id)}
                 >
                   <Icon size={16} />
                   {item.label}
@@ -61,36 +108,6 @@ export default function PortalLayout({ supabase, user, portalUser, tenant, onLog
             })}
           </div>
         </nav>
-
-        {/* Mobile nav toggle */}
-        <button
-          className="portal-mobile-nav-toggle"
-          onClick={() => setMobileNavOpen(!mobileNavOpen)}
-        >
-          <span className="portal-mobile-nav-current">
-            {NAV_ITEMS.find(n => n.id === activePage)?.label}
-          </span>
-          <ChevronDown size={14} />
-        </button>
-
-        {/* Mobile nav dropdown */}
-        {mobileNavOpen && (
-          <div className="portal-mobile-nav">
-            {NAV_ITEMS.map(item => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  className={`portal-nav-item ${activePage === item.id ? 'portal-nav-item--active' : ''}`}
-                  onClick={() => { setActivePage(item.id); setMobileNavOpen(false); }}
-                >
-                  <Icon size={16} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        )}
 
         {/* Content */}
         <main className="portal-content">
