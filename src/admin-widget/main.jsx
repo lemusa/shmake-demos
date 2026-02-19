@@ -39,13 +39,20 @@ import AdminApp from '@shmakecut/admin/AdminApp';
     document.body.appendChild(container);
   }
 
-  // Override 100vh styles so admin fills the embed container, not the full page
+  // Embed overrides: hide the widget's own topbar (parent page has nav),
+  // and fill the container instead of 100vh
   const style = document.createElement('style');
   style.textContent = `
     #${targetId} .admin-app,
     #${targetId} .admin-login,
     #${targetId} .admin-error-page {
       min-height: 600px;
+    }
+    #${targetId} .admin-topbar {
+      display: none;
+    }
+    #${targetId} .admin-login {
+      padding-top: 40px;
     }
   `;
   document.head.appendChild(style);

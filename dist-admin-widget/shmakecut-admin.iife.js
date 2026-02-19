@@ -205,4 +205,10 @@ ${U}`}class Oe extends Error{constructor({message:n,code:s,cause:a,name:u}){var 
     #${n} .admin-error-page {
       min-height: 600px;
     }
+    #${n} .admin-topbar {
+      display: none;
+    }
+    #${n} .admin-login {
+      padding-top: 40px;
+    }
   `,document.head.appendChild(a),mh.createRoot(s).render(lh.createElement(fm))})()})();
