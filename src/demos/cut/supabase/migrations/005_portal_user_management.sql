@@ -5,8 +5,10 @@
 
 -- ============================================================
 -- RLS Policy: Admins can manage portal users
+-- (idempotent — drop if exists, then recreate)
 -- ============================================================
 
+DROP POLICY IF EXISTS "Admins can manage portal users" ON public.cut_portal_users;
 CREATE POLICY "Admins can manage portal users"
   ON public.cut_portal_users FOR ALL
   TO authenticated
