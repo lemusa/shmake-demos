@@ -12,7 +12,13 @@
       "Bash(npm run build:admin-widget:*)",
       "Bash(npm run build:embed:*)",
       "Bash(ls:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:demo.shmake.nz)",
+      "WebFetch(domain:preview.shmake.nz)",
+      "Bash(git rm:*)"
     ]
   }
 }
