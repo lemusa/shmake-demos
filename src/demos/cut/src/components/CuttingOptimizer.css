@@ -41,6 +41,7 @@
   line-height: 1.5;
   font-size: 14px;
   position: relative;
+  padding: 20px;
 }
 
 .shmakecut *, .shmakecut *::before, .shmakecut *::after {
