@@ -9,7 +9,9 @@
       "Bash(node scripts/generate-profiles.mjs:*)",
       "Bash(dir:*)",
       "Bash(npm run build:portal:*)",
-      "Bash(npm run build:admin-widget:*)"
+      "Bash(npm run build:admin-widget:*)",
+      "Bash(npm run build:embed:*)",
+      "Bash(ls:*)"
     ]
   }
 }
