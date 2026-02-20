@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Settings, Plus, X, Upload, Download, ChevronDown, AlertTriangle, ClipboardList, Check, Ruler } from 'lucide-react';
+import { Settings, Plus, X, Upload, Download, ChevronDown, AlertTriangle, ClipboardList, Check, Ruler, Maximize2, Minimize2 } from 'lucide-react';
 import {
   calculateCuttingPlan,
   groupCuttingPatterns,
@@ -616,6 +616,7 @@ export default function CuttingOptimizer({ config }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [leadCapturedThisSession, setLeadCapturedThisSession] = useState(false);
   const [showSendConfirmation, setShowSendConfirmation] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Feature flags (on by default, tenant can disable)
   const enableLeadCapture = configSettings.enableLeadCapture !== false;
@@ -1042,7 +1043,7 @@ export default function CuttingOptimizer({ config }) {
   };
 
   return (
-    <div className="shmakecut">
+    <div className={`shmakecut${isFullscreen ? ' tc-fullscreen' : ''}`}>
       {isCalculating && (
         <CalculatingOverlay />
       )}
@@ -1119,6 +1120,13 @@ export default function CuttingOptimizer({ config }) {
               >Incl GST</button>
             </div>
           )}
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="tc-btn tc-btn--icon"
+            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          >
+            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          </button>
           <div className="tc-settings-trigger">
             <button
               onClick={() => setShowSettings(!showSettings)}
