@@ -617,6 +617,26 @@ export default function CuttingOptimizer({ config }) {
   const [leadCapturedThisSession, setLeadCapturedThisSession] = useState(false);
   const [showSendConfirmation, setShowSendConfirmation] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const shmakecutRef = useRef(null);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      const el = shmakecutRef.current || document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handler);
+    document.addEventListener('webkitfullscreenchange', handler);
+    return () => {
+      document.removeEventListener('fullscreenchange', handler);
+      document.removeEventListener('webkitfullscreenchange', handler);
+    };
+  }, []);
 
   // Feature flags (on by default, tenant can disable)
   const enableLeadCapture = configSettings.enableLeadCapture !== false;
@@ -1043,7 +1063,7 @@ export default function CuttingOptimizer({ config }) {
   };
 
   return (
-    <div className={`shmakecut${isFullscreen ? ' tc-fullscreen' : ''}`}>
+    <div ref={shmakecutRef} className={`shmakecut${isFullscreen ? ' tc-fullscreen' : ''}`}>
       {isCalculating && (
         <CalculatingOverlay />
       )}
@@ -1121,7 +1141,7 @@ export default function CuttingOptimizer({ config }) {
             </div>
           )}
           <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
+            onClick={toggleFullscreen}
             className="tc-btn tc-btn--icon"
             title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
           >
