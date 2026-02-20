@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   ArrowLeft, Save, Plus, X, Trash2, Copy, Check,
   Palette, Package, Layers, Settings, Code, Eye,
-  GripVertical, ChevronDown, ChevronUp,
+  GripVertical, ChevronDown, ChevronUp, Users, KeyRound,
 } from 'lucide-react';
 
 // ============================================
@@ -13,6 +13,7 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
   const [tenant, setTenant] = useState(null);
   const [products, setProducts] = useState([]);
   const [presets, setPresets] = useState([]);
+  const [portalUsers, setPortalUsers] = useState([]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
@@ -96,6 +97,15 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
       .order('sort_order', { ascending: true });
 
     setPresets(pres || []);
+
+    // Load portal users
+    const { data: users } = await supabase
+      .from('cut_portal_users')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: true });
+
+    setPortalUsers(users || []);
     setLoading(false);
   };
 
@@ -298,6 +308,7 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
     ...(!isNew ? [
       { id: 'products', label: 'Products', icon: Package },
       { id: 'presets', label: 'Presets', icon: Layers },
+      { id: 'users', label: 'Users', icon: Users },
       { id: 'theme', label: 'Theme', icon: Palette },
       { id: 'embed', label: 'Embed Code', icon: Code },
     ] : []),
@@ -366,6 +377,14 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
             onAdd={addPreset}
             onDelete={deletePreset}
             setPresets={setPresets}
+          />
+        )}
+        {activeTab === 'users' && (
+          <UsersTab
+            supabase={supabase}
+            tenantId={tenantId}
+            portalUsers={portalUsers}
+            setPortalUsers={setPortalUsers}
           />
         )}
         {activeTab === 'theme' && (
@@ -873,6 +892,246 @@ function PresetsTab({ presets, products, onSave, onAdd, onDelete, setPresets }) 
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+// ============================================
+// USERS TAB
+// ============================================
+
+function UsersTab({ supabase, tenantId, portalUsers, setPortalUsers }) {
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ email: '', name: '', password: '', role: 'admin' });
+  const [creating, setCreating] = useState(false);
+  const [message, setMessage] = useState('');
+  const [resetUserId, setResetUserId] = useState(null);
+  const [resetPassword, setResetPassword] = useState('');
+
+  const showMsg = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(''), 4000);
+  };
+
+  const createUser = async (e) => {
+    e.preventDefault();
+    if (!formData.email || !formData.password) return;
+    if (formData.password.length < 6) {
+      showMsg('Error: Password must be at least 6 characters');
+      return;
+    }
+
+    setCreating(true);
+    setMessage('');
+
+    const { data, error } = await supabase.rpc('create_portal_user', {
+      p_tenant_id: tenantId,
+      p_email: formData.email,
+      p_password: formData.password,
+      p_name: formData.name || null,
+      p_role: formData.role,
+    });
+
+    if (error) {
+      showMsg(`Error: ${error.message}`);
+      setCreating(false);
+      return;
+    }
+
+    // Refresh the list
+    const { data: users } = await supabase
+      .from('cut_portal_users')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: true });
+
+    setPortalUsers(users || []);
+    setFormData({ email: '', name: '', password: '', role: 'admin' });
+    setShowForm(false);
+    setCreating(false);
+    showMsg('User created — they can now log in at portal.shmake.nz');
+  };
+
+  const deleteUser = async (userId) => {
+    if (!confirm('Delete this portal user? They will lose access to the portal.')) return;
+
+    const { error } = await supabase.rpc('delete_portal_user', {
+      p_portal_user_id: userId,
+    });
+
+    if (error) {
+      showMsg(`Error: ${error.message}`);
+      return;
+    }
+
+    setPortalUsers(portalUsers.filter(u => u.id !== userId));
+    showMsg('User deleted');
+  };
+
+  const handleResetPassword = async (userId) => {
+    if (!resetPassword || resetPassword.length < 6) {
+      showMsg('Error: Password must be at least 6 characters');
+      return;
+    }
+
+    const { error } = await supabase.rpc('reset_portal_user_password', {
+      p_portal_user_id: userId,
+      p_new_password: resetPassword,
+    });
+
+    if (error) {
+      showMsg(`Error: ${error.message}`);
+      return;
+    }
+
+    setResetUserId(null);
+    setResetPassword('');
+    showMsg('Password reset');
+  };
+
+  return (
+    <div>
+      <div className="admin-section-header">
+        <div>
+          <p className="admin-subtitle">
+            {portalUsers.length} portal user{portalUsers.length !== 1 ? 's' : ''}
+          </p>
+          {message && (
+            <span className={`admin-save-msg ${message.startsWith('Error') ? 'admin-save-msg--error' : ''}`} style={{ marginLeft: 0, display: 'block', marginTop: 4 }}>
+              {message}
+            </span>
+          )}
+        </div>
+        {!showForm && (
+          <button onClick={() => setShowForm(true)} className="admin-btn admin-btn--primary admin-btn--sm">
+            <Plus size={14} />
+            Add User
+          </button>
+        )}
+      </div>
+
+      {/* Add user form */}
+      {showForm && (
+        <div className="admin-form-section" style={{ marginBottom: 16 }}>
+          <h3>New Portal User</h3>
+          <form onSubmit={createUser}>
+            <div className="admin-form-grid">
+              <div className="admin-field">
+                <label>Email *</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="user@company.co.nz"
+                  required
+                />
+              </div>
+              <div className="admin-field">
+                <label>Name</label>
+                <input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="admin-field">
+                <label>Password *</label>
+                <input
+                  type="text"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Min 6 characters"
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="admin-field">
+                <label>Role</label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                >
+                  <option value="admin">Admin (full access)</option>
+                  <option value="viewer">Viewer (read-only)</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+              <button type="submit" className="admin-btn admin-btn--primary admin-btn--sm" disabled={creating}>
+                <Plus size={14} />
+                {creating ? 'Creating...' : 'Create User'}
+              </button>
+              <button type="button" onClick={() => setShowForm(false)} className="admin-btn admin-btn--sm">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* User list */}
+      {portalUsers.length === 0 && !showForm ? (
+        <div className="admin-empty">
+          <p>No portal users yet. Add a user to give them access to the tenant portal.</p>
+        </div>
+      ) : (
+        <div className="admin-users-list">
+          {portalUsers.map((user) => (
+            <div key={user.id} className="admin-user-row">
+              <div className="admin-user-info">
+                <strong>{user.email}</strong>
+                <span className="admin-text-muted">
+                  {user.name || 'No name'} · {user.role} · {new Date(user.created_at).toLocaleDateString()}
+                </span>
+              </div>
+
+              <div className="admin-user-actions">
+                {/* Reset password */}
+                {resetUserId === user.id ? (
+                  <div className="admin-user-reset">
+                    <input
+                      type="text"
+                      value={resetPassword}
+                      onChange={(e) => setResetPassword(e.target.value)}
+                      placeholder="New password"
+                      style={{ padding: '4px 8px', fontSize: 12, border: '1px solid #e5e7eb', borderRadius: 4, width: 140 }}
+                    />
+                    <button
+                      onClick={() => handleResetPassword(user.id)}
+                      className="admin-btn admin-btn--primary admin-btn--sm"
+                    >
+                      Set
+                    </button>
+                    <button
+                      onClick={() => { setResetUserId(null); setResetPassword(''); }}
+                      className="admin-btn admin-btn--sm"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setResetUserId(user.id)}
+                    className="admin-btn admin-btn--sm"
+                    title="Reset password"
+                  >
+                    <KeyRound size={13} />
+                  </button>
+                )}
+
+                {/* Delete */}
+                <button
+                  onClick={() => deleteUser(user.id)}
+                  className="admin-btn admin-btn--danger admin-btn--sm"
+                  title="Delete user"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

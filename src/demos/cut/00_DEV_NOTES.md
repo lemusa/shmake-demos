@@ -38,6 +38,15 @@
 ## ADMIN
     🔵 How do users access it?
 	🔴 PDF branding image is too big
+	
+	
+	
+	DEMO VIDEO
+	- show general cut examples
+	- show fencing example
+	- show wall example
+	- show pdf export example
+	- show admin overview and what options are configurable
     
     
 	
