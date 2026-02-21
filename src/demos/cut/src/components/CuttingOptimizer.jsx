@@ -617,26 +617,15 @@ export default function CuttingOptimizer({ config }) {
   const [leadCapturedThisSession, setLeadCapturedThisSession] = useState(false);
   const [showSendConfirmation, setShowSendConfirmation] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const shmakecutRef = useRef(null);
 
   const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
-      const el = shmakecutRef.current || document.documentElement;
-      (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
-    } else {
-      (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document);
+    const next = !isFullscreen;
+    setIsFullscreen(next);
+    // Tell parent iframes to expand/collapse
+    if (window.self !== window.top) {
+      window.parent.postMessage({ type: 'shmakecut-fullscreen', fullscreen: next }, '*');
     }
-  }, []);
-
-  useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', handler);
-    document.addEventListener('webkitfullscreenchange', handler);
-    return () => {
-      document.removeEventListener('fullscreenchange', handler);
-      document.removeEventListener('webkitfullscreenchange', handler);
-    };
-  }, []);
+  }, [isFullscreen]);
 
   // Feature flags (on by default, tenant can disable)
   const enableLeadCapture = configSettings.enableLeadCapture !== false;
@@ -1063,7 +1052,7 @@ export default function CuttingOptimizer({ config }) {
   };
 
   return (
-    <div ref={shmakecutRef} className={`shmakecut${isFullscreen ? ' tc-fullscreen' : ''}`}>
+    <div className={`shmakecut${isFullscreen ? ' tc-fullscreen' : ''}`}>
       {isCalculating && (
         <CalculatingOverlay />
       )}
