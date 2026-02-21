@@ -119,40 +119,65 @@ export async function generateCuttingPlanPDF({
 
   let currentY = 0;
 
-  // Pre-load letterhead image if available
-  let letterheadImage = null;
-  if (brandingData?.letterhead) {
-    letterheadImage = await loadImageFromUrl(brandingData.letterhead);
+  // Pre-load logo image if available
+  let logoImage = null;
+  if (companyData?.logo) {
+    logoImage = await loadImageFromUrl(companyData.logo);
   }
 
   // ============================================
-  // HEADER WITH LETTERHEAD
+  // HEADER: Logo + Company Name + Contact Details
   // ============================================
 
-  if (letterheadImage) {
-    const aspectRatio = letterheadImage.width / letterheadImage.height;
-    const imgWidth = pageWidth;
-    const imgHeight = Math.min(imgWidth / aspectRatio, 40);
-
-    doc.addImage(letterheadImage.dataUrl, 'PNG', 0, 0, imgWidth, imgHeight);
-    currentY = imgHeight + 5;
-  } else {
-    // Fallback: simple header bar
+  {
+    const headerHeight = 22;
     doc.setFillColor(...headerBg);
-    doc.rect(0, 0, pageWidth, 18, 'F');
+    doc.rect(0, 0, pageWidth, headerHeight, 'F');
 
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255, 255, 255);
-    doc.text('CUTTING PLAN', margin, 12);
+    let leftX = margin;
 
-    if (companyData?.tradingAs || companyData?.name) {
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(companyData.tradingAs || companyData.name, pageWidth - margin, 12, { align: 'right' });
+    // Logo — constrain to header height with padding
+    if (logoImage) {
+      const logoMaxH = headerHeight - 6;
+      const logoAspect = logoImage.width / logoImage.height;
+      const logoH = logoMaxH;
+      const logoW = logoH * logoAspect;
+      doc.addImage(logoImage.dataUrl, 'PNG', leftX, 3, logoW, logoH);
+      leftX += logoW + 6;
     }
 
-    currentY = 24;
+    // Company name
+    const companyName = companyData?.tradingAs || companyData?.name;
+    if (companyName) {
+      doc.setFontSize(logoImage ? 11 : 14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(255, 255, 255);
+      doc.text(companyName, leftX, headerHeight / 2 + 2);
+    }
+
+    // Contact details on right side
+    const contactParts = [];
+    if (companyData?.phone) contactParts.push(companyData.phone);
+    if (companyData?.email) contactParts.push(companyData.email);
+    if (companyData?.website) contactParts.push(companyData.website.replace(/^https?:\/\//, ''));
+
+    if (contactParts.length > 0) {
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(200, 200, 200);
+      const contactText = contactParts.join('  |  ');
+      doc.text(contactText, pageWidth - margin, headerHeight / 2 + 2, { align: 'right' });
+    }
+
+    // "CUTTING PLAN" subtitle below company name if logo present
+    if (!companyName && !logoImage) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(255, 255, 255);
+      doc.text('CUTTING PLAN', margin, headerHeight / 2 + 2);
+    }
+
+    currentY = headerHeight + 4;
   }
 
   // ============================================

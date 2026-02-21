@@ -866,7 +866,7 @@ export default function CuttingOptimizer({ config }) {
       jobDetails,
       unit,
       settings,
-      companyData: { name: tenant.name },
+      companyData: { name: tenant.name, website: tenant.website, phone: tenant.phone, email: tenant.email, logo: tenant.logo },
       brandingData: { letterhead: tenant.logo, pdfColors: { primary: theme.primary } },
       disclaimer: configSettings.disclaimer,
       formatLength,

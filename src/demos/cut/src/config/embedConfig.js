@@ -13,6 +13,8 @@ export const DEFAULT_CONFIG = {
     embedKey: 'demo',
     logo: null,
     website: null,
+    phone: null,
+    email: null,
   },
   theme: {
     primary: '#1e3a5f',

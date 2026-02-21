@@ -26,6 +26,7 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
     slug: '',
     contact_name: '',
     contact_email: '',
+    phone: '',
     website: '',
     logo_url: '',
     status: 'trial',
@@ -166,6 +167,7 @@ export default function TenantEditor({ supabase, tenantId, onBack, isNew }) {
             name: tenant.name,
             contact_name: tenant.contact_name,
             contact_email: tenant.contact_email,
+            phone: tenant.phone,
             website: tenant.website,
             logo_url: tenant.logo_url,
             theme: tenant.theme,
@@ -427,6 +429,10 @@ function DetailsTab({ tenant, setTenant, isNew }) {
           <div className="admin-field">
             <label>Contact Email</label>
             <input type="email" value={tenant.contact_email || ''} onChange={(e) => update('contact_email', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label>Phone</label>
+            <input type="tel" value={tenant.phone || ''} onChange={(e) => update('phone', e.target.value)} placeholder="e.g. 09 123 4567" />
           </div>
           <div className="admin-field">
             <label>Logo URL</label>
