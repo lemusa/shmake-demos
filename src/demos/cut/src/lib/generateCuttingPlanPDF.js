@@ -131,18 +131,15 @@ export async function generateCuttingPlanPDF({
 
   {
     const headerHeight = 22;
-    doc.setFillColor(...headerBg);
-    doc.rect(0, 0, pageWidth, headerHeight, 'F');
-
     let leftX = margin;
 
     // Logo — constrain to header height with padding
     if (logoImage) {
-      const logoMaxH = headerHeight - 6;
+      const logoMaxH = headerHeight - 4;
       const logoAspect = logoImage.width / logoImage.height;
       const logoH = logoMaxH;
       const logoW = logoH * logoAspect;
-      doc.addImage(logoImage.dataUrl, 'PNG', leftX, 3, logoW, logoH);
+      doc.addImage(logoImage.dataUrl, 'PNG', leftX, 2, logoW, logoH);
       leftX += logoW + 6;
     }
 
@@ -151,7 +148,7 @@ export async function generateCuttingPlanPDF({
     if (companyName) {
       doc.setFontSize(logoImage ? 11 : 14);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(255, 255, 255);
+      doc.setTextColor(...textDark);
       doc.text(companyName, leftX, headerHeight / 2 + 2);
     }
 
@@ -164,20 +161,20 @@ export async function generateCuttingPlanPDF({
     if (contactParts.length > 0) {
       doc.setFontSize(7.5);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(200, 200, 200);
+      doc.setTextColor(...textMuted);
       const contactText = contactParts.join('  |  ');
       doc.text(contactText, pageWidth - margin, headerHeight / 2 + 2, { align: 'right' });
     }
 
-    // "CUTTING PLAN" subtitle below company name if logo present
+    // Fallback when no company info at all
     if (!companyName && !logoImage) {
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(255, 255, 255);
+      doc.setTextColor(...textDark);
       doc.text('CUTTING PLAN', margin, headerHeight / 2 + 2);
     }
 
-    currentY = headerHeight + 4;
+    currentY = headerHeight + 2;
   }
 
   // ============================================
