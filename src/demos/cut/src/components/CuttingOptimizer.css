@@ -83,6 +83,12 @@
   }
 }
 
+@media (max-width: 600px) {
+  .shmakecut {
+    padding: 0;
+  }
+}
+
 .tc-layout__left {
   display: flex;
   flex-direction: column;
@@ -237,6 +243,15 @@
 }
 .tc-ps-trigger__chevron {
   align-self: center; margin: 0 8px; color: var(--tc-text-muted); flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .tc-ps-trigger__meta > span:last-child {
+    display: none;
+  }
+  .tc-ps-trigger__price {
+    display: none;
+  }
 }
 
 /* ---- Dropdown panel ---- */
