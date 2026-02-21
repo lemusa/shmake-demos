@@ -1187,6 +1187,7 @@ function ThemeTab({ tenant, setTenant }) {
     { key: 'warning', label: 'Warning (offcuts)' },
     { key: 'error', label: 'Error (scrap)' },
     { key: 'background', label: 'Background' },
+    { key: 'fieldBackground', label: 'Field Background' },
     { key: 'surface', label: 'Surface' },
     { key: 'border', label: 'Border' },
     { key: 'textPrimary', label: 'Text Primary' },
@@ -1271,6 +1272,7 @@ function ThemeTab({ tenant, setTenant }) {
         >
           <div style={{ color: theme.textPrimary, fontWeight: 600, marginBottom: 4 }}>Calculator Preview</div>
           <div style={{ color: theme.textSecondary, fontSize: 13, marginBottom: 12 }}>This shows how the theme colours look together</div>
+          <div style={{ padding: '6px 10px', background: theme.fieldBackground || theme.background, border: `1px solid ${theme.border}`, borderRadius: theme.borderRadiusSm, color: theme.textMuted, fontSize: 13, marginBottom: 12 }}>Field input preview</div>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
             <div style={{ padding: '6px 14px', background: theme.primary, color: '#fff', borderRadius: theme.borderRadiusSm, fontSize: 13 }}>Calculate</div>
             <div style={{ padding: '6px 14px', background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: theme.borderRadiusSm, fontSize: 13, color: theme.textSecondary }}>Export PDF</div>

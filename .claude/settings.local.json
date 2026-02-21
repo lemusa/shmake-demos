@@ -18,7 +18,9 @@
       "Bash(git push:*)",
       "WebFetch(domain:demo.shmake.nz)",
       "WebFetch(domain:preview.shmake.nz)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "WebFetch(domain:www.halswelltimber.co.nz)",
+      "Bash(curl:*)"
     ]
   }
 }

@@ -23,6 +23,7 @@
   --tc-error: #ef4444;
   --tc-neutral-800: #262626;
   --tc-bg: #ffffff;
+  --tc-field-bg: #ffffff;
   --tc-surface: #f9fafb;
   --tc-surface-alt: #f3f4f6;
   --tc-border: #e5e7eb;
@@ -205,7 +206,7 @@
 /* ---- Trigger button ---- */
 .tc-ps-trigger {
   width: 100%; padding: 0; border: 1.5px solid var(--tc-border);
-  border-radius: var(--tc-radius); background: var(--tc-bg); cursor: pointer;
+  border-radius: var(--tc-radius); background: var(--tc-field-bg); cursor: pointer;
   display: flex; align-items: stretch; overflow: hidden;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: all 0.15s; text-align: left;
   font-family: var(--tc-font);
@@ -274,7 +275,7 @@
 .tc-ps-search__input {
   width: 100%; padding: 7px 10px 7px 32px; border: 1px solid var(--tc-border);
   border-radius: var(--tc-radius-sm); font-size: 13px; outline: none;
-  background: var(--tc-surface); box-sizing: border-box; font-family: var(--tc-font);
+  background: var(--tc-field-bg); box-sizing: border-box; font-family: var(--tc-font);
   color: var(--tc-text);
 }
 .tc-ps-search__input:focus { border-color: var(--tc-accent); }
@@ -389,7 +390,7 @@
   border: 1px solid var(--tc-border);
   border-radius: var(--tc-radius-sm);
   overflow: hidden;
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
 }
 
 .tc-costing-field__prefix,
@@ -448,7 +449,7 @@
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
 }
 
 .tc-job-field input:focus {
@@ -548,7 +549,7 @@
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
 }
 
 .tc-table-row input:focus {
@@ -1153,7 +1154,7 @@
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
 }
 
 .tc-settings-field input:focus,
@@ -1308,7 +1309,7 @@
   font-family: var(--tc-font);
   font-size: 14px;
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
@@ -1488,7 +1489,7 @@
   font-size: 13px;
   font-family: monospace;
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   resize: vertical;
   margin-top: 8px;
 }
@@ -1714,7 +1715,7 @@
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   width: 100%;
 }
 
@@ -1736,7 +1737,7 @@
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   appearance: none;
 }
 
@@ -1838,12 +1839,12 @@
 .tc-fencing-component-select select {
   width: 100%;
   padding: 8px 28px 8px 10px;
-  border: 1.5px solid #CBD5E1;
+  border: 1.5px solid var(--tc-border);
   border-radius: var(--tc-radius-sm);
   font-size: 13px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   appearance: none;
   cursor: pointer;
 }
@@ -1871,7 +1872,7 @@
 /* ---- Trigger ---- */
 .tc-mps-trigger {
   width: 100%; padding: 0; border: 1.5px solid var(--tc-border);
-  border-radius: var(--tc-radius-sm); background: var(--tc-bg); cursor: pointer;
+  border-radius: var(--tc-radius-sm); background: var(--tc-field-bg); cursor: pointer;
   display: flex; align-items: stretch; overflow: hidden;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04); transition: all 0.15s; text-align: left;
   font-family: var(--tc-font);
@@ -1988,7 +1989,7 @@
   font-size: 12px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-bg);
+  background: var(--tc-field-bg);
   text-align: center;
 }
 
@@ -2677,7 +2678,7 @@
   font-size: 12px;
   font-family: var(--tc-font);
   color: var(--tc-text);
-  background: var(--tc-surface);
+  background: var(--tc-field-bg);
   appearance: none;
   cursor: pointer;
 }
