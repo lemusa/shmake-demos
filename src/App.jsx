@@ -35,6 +35,12 @@ const demos = [
     component: lazy(() => import('./demos/cut/src/DemoWrapper')),
     fullPage: true,
   },
+  {
+    path: 'pregrid/*',
+    title: 'PreGrid',
+    component: lazy(() => import('./demos/pregrid/PreGridApp')),
+    fullPage: true,
+  },
 ]
 
 function DemoLoader() {

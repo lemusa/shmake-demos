@@ -20,7 +20,9 @@
       "WebFetch(domain:preview.shmake.nz)",
       "Bash(git rm:*)",
       "WebFetch(domain:www.halswelltimber.co.nz)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(cat)",
+      "Read(//tmp/**)"
     ]
   }
 }
