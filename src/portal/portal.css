@@ -1385,53 +1385,237 @@ body {
    LOGIN
    ============================================ */
 
-.portal-login {
+/* ============================================
+   PORTAL LANDING (sign-in) — matches shmake.nz design language
+   ============================================ */
+.portal-landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fafaf7;
+  background-image: radial-gradient(circle at 20% 0%, rgba(249, 115, 22, 0.06), transparent 55%);
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Top dark header bar — mirrors the demo layout */
+.portal-landing-header {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  flex-shrink: 0;
+}
+
+.portal-landing-header-inner {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.portal-landing-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.portal-landing-brand-logo {
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.portal-landing-brand-sep {
+  color: #334155;
+  font-weight: 300;
+}
+
+.portal-landing-brand-title {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.portal-landing-header-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.portal-landing-header-link:hover {
+  color: #ffffff;
+}
+
+/* Main area — centered sign-in card */
+.portal-landing-main {
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 24px;
-  background: var(--portal-bg);
+  padding: 3rem 1.5rem;
 }
 
-.portal-login-card {
+.portal-landing-card {
   width: 100%;
-  max-width: 380px;
-  background: var(--portal-surface);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  overflow: hidden;
-}
-
-.portal-login-header {
-  background: #1e293b;
-  padding: 24px 32px;
-}
-
-.portal-login-logo {
-  height: 28px;
-  width: auto;
-  display: block;
-}
-
-.portal-login-card h1 {
-  margin: 0 0 4px;
-  font-size: 22px;
-  padding: 24px 32px 0;
-}
-
-.portal-login-card > p {
-  margin: 4px 0 0;
-  color: var(--portal-text-muted);
-  font-size: 14px;
-  padding: 0 32px;
-}
-
-.portal-login-card form {
+  max-width: 420px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 32px 32px;
+}
+
+/* Split eyebrow — matches shmake.nz's .split-eyebrow */
+.portal-landing-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.portal-landing-eyebrow-line {
+  width: 28px;
+  height: 1px;
+  background: #f97316;
+}
+
+.portal-landing-eyebrow-text {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f97316;
+}
+
+.portal-landing-headline {
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  margin: 0 0 0.6rem;
+  color: #1a1a1a;
+}
+
+.portal-landing-sub {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #666666;
+  margin: 0 0 1.75rem;
+}
+
+.portal-landing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.portal-landing-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-landing-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.portal-landing-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #1a1a1a;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.portal-landing-input:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.portal-landing-error {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+  font-size: 0.88rem;
+}
+
+.portal-landing-submit {
+  width: 100%;
+  padding: 0.95rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background: #f97316;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  margin-top: 0.25rem;
+}
+
+.portal-landing-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -6px rgba(249, 115, 22, 0.4);
+}
+
+.portal-landing-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.portal-landing-submit-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.portal-landing-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: portal-landing-spin 0.8s linear infinite;
+}
+
+@keyframes portal-landing-spin {
+  to { transform: rotate(360deg); }
+}
+
+.portal-landing-help {
+  margin: 1.5rem 0 0;
+  font-size: 0.85rem;
+  text-align: center;
+  color: #71717a;
+}
+
+.portal-landing-help a {
+  color: #f97316;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.portal-landing-help a:hover {
+  text-decoration: underline;
 }
 
 /* ============================================

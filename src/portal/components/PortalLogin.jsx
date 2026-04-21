@@ -29,41 +29,90 @@ export default function PortalLogin({ supabase, onLogin, serverError }) {
   const displayError = error || serverError;
 
   return (
-    <div className="portal-login">
-      <div className="portal-login-card">
-        <div className="portal-login-header">
-          <img src="https://www.shmake.nz/assets/shmake-logo-light.png" alt="SHMAKE" className="portal-login-logo" />
+    <div className="portal-landing">
+      <header className="portal-landing-header">
+        <div className="portal-landing-header-inner">
+          <div className="portal-landing-brand">
+            <a href="https://shmake.nz" className="portal-landing-brand-logo">SHMAKE</a>
+            <span className="portal-landing-brand-sep">/</span>
+            <span className="portal-landing-brand-title">Client Portal</span>
+          </div>
+          <a
+            href="https://shmake.nz"
+            className="portal-landing-header-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            shmake.nz →
+          </a>
         </div>
-        <h1>Sign in to your portal</h1>
-        <p>Manage your products, leads, and embed settings.</p>
-        <form onSubmit={handleLogin}>
-          <div className="portal-field">
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-              placeholder="you@company.co.nz"
-            />
+      </header>
+
+      <main className="portal-landing-main">
+        <div className="portal-landing-card">
+          <div className="portal-landing-eyebrow">
+            <span className="portal-landing-eyebrow-line" />
+            <span className="portal-landing-eyebrow-text">Welcome</span>
           </div>
-          <div className="portal-field">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
-          {displayError && <div className="portal-error">{displayError}</div>}
-          <button type="submit" className="portal-btn portal-btn--primary portal-btn--full" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-      </div>
+
+          <h1 className="portal-landing-headline">Your apps, in one place.</h1>
+          <p className="portal-landing-sub">
+            Sign in to access the apps SHMAKE has set up for you.
+          </p>
+
+          <form onSubmit={handleLogin} className="portal-landing-form">
+            <div className="portal-landing-field">
+              <label className="portal-landing-label">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoFocus
+                autoComplete="email"
+                className="portal-landing-input"
+                placeholder="you@company.co.nz"
+              />
+            </div>
+
+            <div className="portal-landing-field">
+              <label className="portal-landing-label">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="portal-landing-input"
+                placeholder="Enter your password"
+              />
+            </div>
+
+            {displayError && (
+              <div className="portal-landing-error">{displayError}</div>
+            )}
+
+            <button
+              type="submit"
+              className="portal-landing-submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="portal-landing-submit-row">
+                  <span className="portal-landing-spinner" />
+                  Signing in…
+                </span>
+              ) : (
+                'Sign in →'
+              )}
+            </button>
+          </form>
+
+          <p className="portal-landing-help">
+            Trouble signing in? <a href="mailto:sam@shmake.nz">sam@shmake.nz</a>
+          </p>
+        </div>
+      </main>
     </div>
   );
 }
