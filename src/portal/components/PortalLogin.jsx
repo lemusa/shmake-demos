@@ -30,24 +30,6 @@ export default function PortalLogin({ supabase, onLogin, serverError }) {
 
   return (
     <div className="portal-landing">
-      <header className="portal-landing-header">
-        <div className="portal-landing-header-inner">
-          <div className="portal-landing-brand">
-            <a href="https://shmake.nz" className="portal-landing-brand-logo">SHMAKE</a>
-            <span className="portal-landing-brand-sep">/</span>
-            <span className="portal-landing-brand-title">Client Portal</span>
-          </div>
-          <a
-            href="https://shmake.nz"
-            className="portal-landing-header-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            shmake.nz →
-          </a>
-        </div>
-      </header>
-
       <main className="portal-landing-main">
         <div className="portal-landing-card">
           <div className="portal-landing-eyebrow">
